@@ -71,14 +71,12 @@ const WorldMap = ({ selectedRegion, onRegionClick, defaultRoute, optimizedRoute,
         <ComposableMap
           projection="geoEqualEarth"
           projectionConfig={{ scale: 155 }}
-          width={900}
-          height={440}
+          width={MAP_WIDTH}
+          height={MAP_HEIGHT}
           style={{ width: "100%", height: "auto", display: "block" }}
         >
           {/* Ocean background */}
           <rect x={-1000} y={-1000} width={3000} height={3000} fill="hsl(220,30%,8%)" />
-
-          {/* Graticule-like grid via CSS pattern using rect fill won't work in svg easily; skip for cleanliness */}
 
           <Geographies geography={GEO_URL}>
             {({ geographies }) =>
@@ -98,6 +96,15 @@ const WorldMap = ({ selectedRegion, onRegionClick, defaultRoute, optimizedRoute,
               ))
             }
           </Geographies>
+
+          {/* Overlay for full India (Jammu & Kashmir), which the default topojson omits */}
+          <polygon
+            points={jkPoints}
+            fill="hsl(220,15%,14%)"
+            stroke="hsl(220,15%,22%)"
+            strokeWidth={0.4}
+          />
+
 
           {/* Default route */}
           {defaultRoute && defaultRoute.points.length > 1 && (
