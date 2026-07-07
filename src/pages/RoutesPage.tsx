@@ -54,12 +54,19 @@ const RoutesPage = () => {
         </motion.div>
       )}
 
-      {/* Map */}
-      <WorldMap
-        defaultRoute={selectedType === "shortest" ? defaultRoute : undefined}
-        optimizedRoute={activeRoute}
-        showOptimized={selectedType !== "shortest"}
-      />
+      {/* Map + Sea weather */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <div className="xl:col-span-2">
+          <WorldMap
+            defaultRoute={selectedType === "shortest" ? defaultRoute : undefined}
+            optimizedRoute={activeRoute}
+            showOptimized={selectedType !== "shortest"}
+          />
+        </div>
+        <div className="xl:col-span-1 min-h-[440px]">
+          <SeaWeatherPanel compact />
+        </div>
+      </div>
 
       {/* Route details comparison */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
