@@ -8,6 +8,7 @@ import ShipmentList from "@/components/dashboard/ShipmentList";
 import RouteComparison from "@/components/dashboard/RouteComparison";
 import ScenarioPanel from "@/components/dashboard/ScenarioPanel";
 import RiskChart from "@/components/dashboard/RiskChart";
+import SeaWeatherPanel from "@/components/dashboard/SeaWeatherPanel";
 import { defaultRoute, optimizedRoute } from "@/data/mockData";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -44,15 +45,20 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Shipments + Route + Scenario */}
+      {/* Sea Weather + Route + Scenario */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <ShipmentList selectedShipment={selectedShipment} onSelect={setSelectedShipment} />
+        <div className="lg:col-span-1 min-h-[520px]">
+          <SeaWeatherPanel compact />
+        </div>
         <RouteComparison showOptimized={showOptimized} onToggle={() => setShowOptimized(!showOptimized)} />
         <ScenarioPanel />
       </div>
 
-      {/* Chart */}
-      <RiskChart />
+      {/* Shipments + Chart */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <ShipmentList selectedShipment={selectedShipment} onSelect={setSelectedShipment} />
+        <RiskChart />
+      </div>
     </PageLayout>
   );
 };

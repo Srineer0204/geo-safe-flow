@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Leaf, Shield, Zap } from "lucide-react";
 import PageLayout from "@/components/dashboard/PageLayout";
 import WorldMap from "@/components/dashboard/WorldMap";
+import SeaWeatherPanel from "@/components/dashboard/SeaWeatherPanel";
 import { defaultRoute, optimizedRoute, ecoRoute } from "@/data/mockData";
 import { useLanguage } from "@/i18n/LanguageContext";
 
