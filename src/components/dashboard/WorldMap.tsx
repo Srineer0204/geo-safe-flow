@@ -129,7 +129,8 @@ const WorldMap = ({ selectedRegion, onRegionClick, defaultRoute, optimizedRoute,
                   r={isSelected ? 16 : 12}
                   fill={color}
                   opacity={0.18}
-                  animate={{ r: isSelected ? [16, 20, 16] : 12 }}
+                  initial={{ scale: 1 }}
+                  animate={isSelected ? { scale: [1, 1.35, 1] } : { scale: 1 }}
                   transition={{ duration: 2, repeat: isSelected ? Infinity : 0 }}
                 />
                 <circle r={5} fill={color} opacity={0.9} />
