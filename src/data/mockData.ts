@@ -6,7 +6,8 @@ export interface Region {
   riskLevel: RiskLevel;
   riskScore: number;
   factors: string[];
-  coordinates: { x: number; y: number };
+  /** [longitude, latitude] */
+  coordinates: [number, number];
 }
 
 export interface Shipment {
@@ -38,8 +39,8 @@ export interface Alert {
 
 export interface RoutePoint {
   name: string;
-  x: number;
-  y: number;
+  /** [longitude, latitude] */
+  coordinates: [number, number];
 }
 
 export interface Route {
@@ -70,14 +71,30 @@ export interface Scenario {
   };
 }
 
+export type SeaCondition = "calm" | "moderate" | "rough" | "severe";
+
+export interface SeaWeather {
+  id: string;
+  region: string;
+  condition: SeaCondition;
+  waveHeight: number; // meters
+  windSpeed: number; // knots
+  visibility: number; // km
+  temperature: number; // °C
+  swellDirection: string;
+  forecast: string;
+  precautions: string[];
+}
+
+// Coordinates are [longitude, latitude]
 export const regions: Region[] = [
-  { id: "me", name: "Middle East", riskLevel: "high", riskScore: 78, factors: ["Political instability", "Port congestion"], coordinates: { x: 58, y: 42 } },
-  { id: "eu", name: "Europe", riskLevel: "low", riskScore: 22, factors: ["Labor strikes"], coordinates: { x: 48, y: 28 } },
-  { id: "sa", name: "South Asia", riskLevel: "medium", riskScore: 55, factors: ["Weather", "Port congestion"], coordinates: { x: 68, y: 42 } },
-  { id: "ea", name: "East Asia", riskLevel: "low", riskScore: 18, factors: ["Weather"], coordinates: { x: 78, y: 35 } },
-  { id: "af", name: "East Africa", riskLevel: "high", riskScore: 82, factors: ["Political instability", "Weather"], coordinates: { x: 55, y: 55 } },
-  { id: "na", name: "North America", riskLevel: "low", riskScore: 12, factors: [], coordinates: { x: 22, y: 30 } },
-  { id: "sea", name: "Southeast Asia", riskLevel: "medium", riskScore: 45, factors: ["Weather", "Port congestion"], coordinates: { x: 75, y: 50 } },
+  { id: "me", name: "Middle East", riskLevel: "high", riskScore: 78, factors: ["Political instability", "Port congestion"], coordinates: [48, 27] },
+  { id: "eu", name: "Europe", riskLevel: "low", riskScore: 22, factors: ["Labor strikes"], coordinates: [10, 50] },
+  { id: "sa", name: "South Asia", riskLevel: "medium", riskScore: 55, factors: ["Weather", "Port congestion"], coordinates: [78, 21] },
+  { id: "ea", name: "East Asia", riskLevel: "low", riskScore: 18, factors: ["Weather"], coordinates: [115, 32] },
+  { id: "af", name: "East Africa", riskLevel: "high", riskScore: 82, factors: ["Political instability", "Weather"], coordinates: [40, -3] },
+  { id: "na", name: "North America", riskLevel: "low", riskScore: 12, factors: [], coordinates: [-100, 40] },
+  { id: "sea", name: "Southeast Asia", riskLevel: "medium", riskScore: 45, factors: ["Weather", "Port congestion"], coordinates: [110, 5] },
 ];
 
 export const shipments: Shipment[] = [
@@ -103,13 +120,15 @@ export const defaultRoute: Route = {
   id: "r1",
   name: "Standard Route (Shortest)",
   points: [
-    { name: "Mumbai", x: 68, y: 45 },
-    { name: "Arabian Sea", x: 60, y: 44 },
-    { name: "Gulf of Aden", x: 55, y: 46 },
-    { name: "Red Sea", x: 52, y: 40 },
-    { name: "Suez Canal", x: 51, y: 36 },
-    { name: "Mediterranean", x: 48, y: 33 },
-    { name: "Rotterdam", x: 46, y: 26 },
+    { name: "Mumbai", coordinates: [72.87, 19.07] },
+    { name: "Arabian Sea", coordinates: [63, 15] },
+    { name: "Gulf of Aden", coordinates: [48, 12] },
+    { name: "Red Sea", coordinates: [38, 20] },
+    { name: "Suez Canal", coordinates: [32.5, 30] },
+    { name: "Mediterranean", coordinates: [15, 36] },
+    { name: "Gibraltar", coordinates: [-5.5, 36] },
+    { name: "Bay of Biscay", coordinates: [-5, 45] },
+    { name: "Rotterdam", coordinates: [4.48, 51.92] },
   ],
   risk: 72,
   cost: 48500,
@@ -126,13 +145,15 @@ export const optimizedRoute: Route = {
   id: "r2",
   name: "Optimized Route (Safest)",
   points: [
-    { name: "Mumbai", x: 68, y: 45 },
-    { name: "Arabian Sea", x: 62, y: 50 },
-    { name: "East Africa Coast", x: 55, y: 60 },
-    { name: "Cape of Good Hope", x: 48, y: 72 },
-    { name: "West Africa Coast", x: 40, y: 55 },
-    { name: "Bay of Biscay", x: 44, y: 32 },
-    { name: "Rotterdam", x: 46, y: 26 },
+    { name: "Mumbai", coordinates: [72.87, 19.07] },
+    { name: "Arabian Sea", coordinates: [65, 10] },
+    { name: "East Africa Coast", coordinates: [45, -10] },
+    { name: "Mozambique Channel", coordinates: [40, -25] },
+    { name: "Cape of Good Hope", coordinates: [18.47, -34.35] },
+    { name: "West Africa Coast", coordinates: [0, -10] },
+    { name: "Canary Islands", coordinates: [-16, 28] },
+    { name: "Bay of Biscay", coordinates: [-5, 45] },
+    { name: "Rotterdam", coordinates: [4.48, 51.92] },
   ],
   risk: 25,
   cost: 36200,
@@ -149,13 +170,15 @@ export const ecoRoute: Route = {
   id: "r3",
   name: "Eco-Friendly Route",
   points: [
-    { name: "Mumbai", x: 68, y: 45 },
-    { name: "Arabian Sea", x: 63, y: 48 },
-    { name: "East Africa Coast", x: 56, y: 58 },
-    { name: "Mozambique Channel", x: 52, y: 65 },
-    { name: "Cape of Good Hope", x: 47, y: 72 },
-    { name: "Atlantic", x: 42, y: 45 },
-    { name: "Rotterdam", x: 46, y: 26 },
+    { name: "Mumbai", coordinates: [72.87, 19.07] },
+    { name: "Arabian Sea", coordinates: [63, 8] },
+    { name: "East Africa Coast", coordinates: [48, -8] },
+    { name: "Mozambique Channel", coordinates: [40, -22] },
+    { name: "Cape of Good Hope", coordinates: [18.47, -34.35] },
+    { name: "Atlantic", coordinates: [-10, -5] },
+    { name: "Canary Islands", coordinates: [-18, 28] },
+    { name: "English Channel", coordinates: [0, 50] },
+    { name: "Rotterdam", coordinates: [4.48, 51.92] },
   ],
   risk: 38,
   cost: 39800,
@@ -182,4 +205,119 @@ export const riskTrendData = [
   { month: "Jan", middleEast: 75, europe: 20, asia: 50, africa: 78 },
   { month: "Feb", middleEast: 72, europe: 25, asia: 48, africa: 80 },
   { month: "Mar", middleEast: 78, europe: 22, asia: 55, africa: 82 },
+];
+
+export const seaWeather: SeaWeather[] = [
+  {
+    id: "sw1",
+    region: "Arabian Sea",
+    condition: "rough",
+    waveHeight: 4.2,
+    windSpeed: 32,
+    visibility: 6,
+    temperature: 28,
+    swellDirection: "SW",
+    forecast: "Deepening low pressure system. Conditions expected to worsen over 48h with potential cyclone formation.",
+    precautions: [
+      "Reduce vessel speed to 12 knots",
+      "Secure all deck cargo and containers",
+      "Maintain continuous VHF Ch.16 monitoring",
+      "Consider rerouting via East African coast",
+    ],
+  },
+  {
+    id: "sw2",
+    region: "Red Sea",
+    condition: "moderate",
+    waveHeight: 1.8,
+    windSpeed: 18,
+    visibility: 10,
+    temperature: 26,
+    swellDirection: "N",
+    forecast: "Stable northerly winds. Clear visibility expected through the next 72 hours.",
+    precautions: [
+      "Standard navigation protocols apply",
+      "Monitor for regional security advisories",
+      "Maintain convoy transit windows",
+    ],
+  },
+  {
+    id: "sw3",
+    region: "Bay of Bengal",
+    condition: "severe",
+    waveHeight: 6.5,
+    windSpeed: 48,
+    visibility: 3,
+    temperature: 29,
+    swellDirection: "SSW",
+    forecast: "Tropical Cyclone 'Nivar' intensifying. Category 2 conditions with peak gusts up to 75 knots expected.",
+    precautions: [
+      "AVOID region — reroute mandatory",
+      "All vessels in area seek nearest safe harbor",
+      "Activate storm reporting to MRCC",
+      "Ballast adjustments for heavy weather",
+    ],
+  },
+  {
+    id: "sw4",
+    region: "Mediterranean Sea",
+    condition: "calm",
+    waveHeight: 0.8,
+    windSpeed: 8,
+    visibility: 15,
+    temperature: 22,
+    swellDirection: "W",
+    forecast: "High pressure ridge maintaining excellent conditions. Clear skies and light winds for 5+ days.",
+    precautions: [
+      "Optimal transit conditions",
+      "Standard watchkeeping",
+    ],
+  },
+  {
+    id: "sw5",
+    region: "South China Sea",
+    condition: "moderate",
+    waveHeight: 2.4,
+    windSpeed: 22,
+    visibility: 8,
+    temperature: 27,
+    swellDirection: "NE",
+    forecast: "Monsoon transition. Occasional squalls with brief visibility reduction expected.",
+    precautions: [
+      "Maintain heightened bridge watch",
+      "Radar plotting for reduced visibility",
+      "Verify cargo lashing pre-departure",
+    ],
+  },
+  {
+    id: "sw6",
+    region: "Cape of Good Hope",
+    condition: "rough",
+    waveHeight: 5.1,
+    windSpeed: 38,
+    visibility: 7,
+    temperature: 14,
+    swellDirection: "SW",
+    forecast: "Southerly Cape rollers active. Sustained heavy swell with cross-seas near shelf edge.",
+    precautions: [
+      "Reduce speed and adjust heading for swell",
+      "Fuel reserves check — expect +8% consumption",
+      "Alert crew to secure loose equipment",
+    ],
+  },
+  {
+    id: "sw7",
+    region: "English Channel",
+    condition: "calm",
+    waveHeight: 1.1,
+    windSpeed: 12,
+    visibility: 12,
+    temperature: 11,
+    swellDirection: "W",
+    forecast: "Stable westerly flow. Fog patches possible near dawn along Dover Strait.",
+    precautions: [
+      "TSS compliance mandatory",
+      "Fog protocols on standby",
+    ],
+  },
 ];
