@@ -1,38 +1,9 @@
 import { motion } from "framer-motion";
 import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
-import { geoEqualEarth } from "d3-geo";
 import { regions, type Region, type Route } from "@/data/mockData";
 
-// Approx polygon covering the parts of Jammu & Kashmir (incl. PoK/Gilgit-Baltistan
-// and Aksai Chin) that the default Natural Earth topojson omits from India.
-// Rendered as a filled overlay in the same land colour so India appears whole.
-const JK_CLAIM: [number, number][] = [
-  [73.9, 34.0],
-  [73.5, 34.9],
-  [74.1, 36.0],
-  [75.3, 36.9],
-  [76.8, 36.7],
-  [78.2, 35.6],
-  [79.6, 35.5],
-  [80.3, 34.9],
-  [80.2, 34.1],
-  [78.8, 33.5],
-  [78.3, 32.6],
-  [77.1, 32.5],
-  [75.6, 32.7],
-  [74.3, 32.9],
-];
-
-// Match ComposableMap projection config below so overlays align.
 const MAP_WIDTH = 900;
 const MAP_HEIGHT = 440;
-const jkProjection = geoEqualEarth()
-  .scale(155)
-  .translate([MAP_WIDTH / 2, MAP_HEIGHT / 2]);
-const jkPoints = JK_CLAIM.map((c) => jkProjection(c))
-  .filter((p): p is [number, number] => !!p)
-  .map(([x, y]) => `${x},${y}`)
-  .join(" ");
 
 interface WorldMapProps {
   selectedRegion?: string;
