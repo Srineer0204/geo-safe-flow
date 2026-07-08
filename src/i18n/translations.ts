@@ -16,6 +16,7 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.simulation": "Simulation",
     "nav.riskIntel": "Risk Intel",
     "nav.settings": "Settings",
+    "nav.profile": "Profile",
     "header.lastUpdated": "Last updated",
     "header.activeShipments": "active shipments",
     "header.systemsOnline": "Systems Online",
