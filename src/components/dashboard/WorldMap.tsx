@@ -68,13 +68,6 @@ const WorldMap = ({ selectedRegion, onRegionClick, defaultRoute, optimizedRoute,
             }
           </Geographies>
 
-          {/* Overlay for full India (Jammu & Kashmir), which the default topojson omits */}
-          <polygon
-            points={jkPoints}
-            fill="hsl(220,15%,14%)"
-            stroke="hsl(220,15%,22%)"
-            strokeWidth={0.4}
-          />
 
 
           {/* Default route */}
