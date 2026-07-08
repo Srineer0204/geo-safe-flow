@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Sidebar from "./Sidebar";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemeToggle from "./ThemeToggle";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 interface PageLayoutProps {
@@ -24,6 +25,7 @@ const PageLayout = ({ children, title, subtitle }: PageLayoutProps) => {
             )}
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
+            <ThemeToggle />
             <LanguageSwitcher />
             <div className="hidden sm:flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-risk-low animate-pulse-glow" />

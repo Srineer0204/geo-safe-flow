@@ -1,4 +1,4 @@
-import { LayoutDashboard, Map, Ship, Bell, Zap, Shield, Settings } from "lucide-react";
+import { LayoutDashboard, Map, Ship, Bell, Zap, Shield, Settings, User } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -9,6 +9,7 @@ const navItems = [
   { icon: Bell, labelKey: "nav.alerts", path: "/alerts" },
   { icon: Zap, labelKey: "nav.simulation", path: "/simulation" },
   { icon: Shield, labelKey: "nav.riskIntel", path: "/risk-intel" },
+  { icon: User, labelKey: "nav.profile", path: "/profile" },
 ];
 
 const Sidebar = () => {
@@ -53,10 +54,23 @@ const Sidebar = () => {
       </nav>
 
       <div className="p-2 border-t border-sidebar-border">
-        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all">
-          <Settings className="h-4 w-4 shrink-0" />
-          <span className="hidden lg:block">{t("nav.settings")}</span>
-        </button>
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
+              isActive
+                ? "bg-sidebar-accent text-sidebar-accent-foreground border border-primary/20"
+                : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+            }`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <Settings className={`h-4 w-4 shrink-0 ${isActive ? "text-primary" : ""}`} />
+              <span className="hidden lg:block">{t("nav.settings")}</span>
+            </>
+          )}
+        </NavLink>
       </div>
     </aside>
   );
