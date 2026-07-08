@@ -25,7 +25,7 @@ const riskColors: Record<string, string> = {
 
 const WorldMap = ({ selectedRegion, onRegionClick, defaultRoute, optimizedRoute, showOptimized }: WorldMapProps) => {
   return (
-    <div className="glass-panel p-4 h-full relative overflow-hidden">
+    <div className="glass-panel p-4 relative overflow-hidden">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">Global Risk Map</h3>
         <div className="flex gap-3 text-xs">
