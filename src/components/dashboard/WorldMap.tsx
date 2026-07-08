@@ -3,7 +3,7 @@ import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simpl
 import { regions, type Region, type Route } from "@/data/mockData";
 
 const MAP_WIDTH = 900;
-const MAP_HEIGHT = 440;
+const MAP_HEIGHT = 520;
 
 interface WorldMapProps {
   selectedRegion?: string;
@@ -25,7 +25,7 @@ const riskColors: Record<string, string> = {
 
 const WorldMap = ({ selectedRegion, onRegionClick, defaultRoute, optimizedRoute, showOptimized }: WorldMapProps) => {
   return (
-    <div className="glass-panel p-4 h-full relative overflow-hidden">
+    <div className="glass-panel p-4 relative overflow-hidden">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">Global Risk Map</h3>
         <div className="flex gap-3 text-xs">
@@ -51,22 +51,46 @@ const WorldMap = ({ selectedRegion, onRegionClick, defaultRoute, optimizedRoute,
 
           <Geographies geography={GEO_URL}>
             {({ geographies }) =>
+              geographies
+                .filter((geo) => geo.properties?.name !== "India")
+                .map((geo) => (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill="hsl(220,15%,14%)"
+                    stroke="hsl(220,15%,22%)"
+                    strokeWidth={0.4}
+                    style={{
+                      default: { outline: "none" },
+                      hover: { fill: "hsl(220,15%,18%)", outline: "none" },
+                      pressed: { outline: "none" },
+                    }}
+                  />
+                ))
+            }
+          </Geographies>
+
+          {/* India overlay with full territorial claim (incl. J&K, Ladakh) */}
+          <Geographies geography="https://cdn.jsdelivr.net/gh/geohacker/india@master/state/india_telengana.geojson">
+            {({ geographies }) =>
               geographies.map((geo) => (
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
                   fill="hsl(220,15%,14%)"
                   stroke="hsl(220,15%,22%)"
-                  strokeWidth={0.4}
+                  strokeWidth={0.3}
                   style={{
-                    default: { outline: "none" },
-                    hover: { fill: "hsl(220,15%,18%)", outline: "none" },
+                    default: { outline: "none", pointerEvents: "none" },
+                    hover: { outline: "none" },
                     pressed: { outline: "none" },
                   }}
                 />
               ))
             }
           </Geographies>
+
+
 
 
 
