@@ -1,20 +1,60 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Leaf, Shield, Zap } from "lucide-react";
 import PageLayout from "@/components/dashboard/PageLayout";
 import WorldMap from "@/components/dashboard/WorldMap";
 import SeaWeatherPanel from "@/components/dashboard/SeaWeatherPanel";
-import { defaultRoute, optimizedRoute, ecoRoute } from "@/data/mockData";
+import RegionNewsPanel from "@/components/dashboard/RegionNewsPanel";
+import CorridorSelector from "@/components/dashboard/CorridorSelector";
+import { type Route } from "@/data/mockData";
+import { corridors } from "@/data/ports";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 type RouteType = "shortest" | "safest" | "eco";
 
+const buildRoute = (
+  corridorId: string,
+  name: string,
+  type: RouteType,
+  base: { points: { name: string; coordinates: [number, number] }[]; distance: number; time: string; cost: number; risk: number; co2: number; ecoScore: number }
+): Route => ({
+  id: `${corridorId}-${type}`,
+  name,
+  type,
+  isOptimized: type !== "shortest",
+  fuelConsumption: Math.round(base.co2 * 0.38),
+  ...base,
+});
+
 const RoutesPage = () => {
+  const [corridorId, setCorridorId] = useState<string>("mumbai-rotterdam");
   const [selectedType, setSelectedType] = useState<RouteType>("shortest");
   const { t } = useLanguage();
 
-  const routes = { shortest: defaultRoute, safest: optimizedRoute, eco: ecoRoute };
+  const active = useMemo(() => corridors.find((c) => c.id === corridorId)!, [corridorId]);
+
+  const routes = useMemo(
+    () => ({
+      shortest: buildRoute(active.id, `${active.name} — Shortest`, "shortest", active.shortest),
+      safest: buildRoute(active.id, `${active.name} — Safest`, "safest", active.safest),
+      eco: buildRoute(active.id, `${active.name} — Eco`, "eco", active.eco),
+    }),
+    [active]
+  );
   const activeRoute = routes[selectedType];
+
+  const extraRoutes = useMemo(
+    () =>
+      corridors
+        .filter((c) => c.id !== corridorId)
+        .map((c) => ({
+          id: c.id,
+          points: c.shortest.points,
+          color: "hsl(200,30%,55%)",
+          opacity: 0.22,
+        })),
+    [corridorId]
+  );
 
   const tabs: { key: RouteType; labelKey: string; icon: typeof Zap }[] = [
     { key: "shortest", labelKey: "routes.shortest", icon: Zap },
@@ -24,6 +64,8 @@ const RoutesPage = () => {
 
   return (
     <PageLayout title={t("routes.title")}>
+      <CorridorSelector value={corridorId} onChange={setCorridorId} />
+
       {/* Route type selector */}
       <div className="flex gap-2">
         {tabs.map((tab) => (
@@ -42,7 +84,6 @@ const RoutesPage = () => {
         ))}
       </div>
 
-      {/* Eco badge */}
       {selectedType === "eco" && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -54,17 +95,23 @@ const RoutesPage = () => {
         </motion.div>
       )}
 
-      {/* Map + Sea weather */}
+      {/* Map + panels */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
         <div className="xl:col-span-2">
           <WorldMap
-            defaultRoute={selectedType === "shortest" ? defaultRoute : undefined}
+            defaultRoute={selectedType === "shortest" ? routes.shortest : undefined}
             optimizedRoute={activeRoute}
             showOptimized={selectedType !== "shortest"}
+            extraRoutes={extraRoutes}
           />
         </div>
-        <div className="xl:col-span-1 min-h-[440px]">
-          <SeaWeatherPanel compact />
+        <div className="xl:col-span-1 flex flex-col gap-5">
+          <div className="min-h-[240px]">
+            <SeaWeatherPanel compact />
+          </div>
+          <div className="min-h-[240px]">
+            <RegionNewsPanel />
+          </div>
         </div>
       </div>
 
