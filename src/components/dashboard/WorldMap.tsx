@@ -1,9 +1,17 @@
 import { motion } from "framer-motion";
 import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
 import { regions, type Region, type Route } from "@/data/mockData";
+import { ports as allPorts, type Port } from "@/data/ports";
 
 const MAP_WIDTH = 900;
 const MAP_HEIGHT = 520;
+
+export interface ExtraRoute {
+  id: string;
+  points: { name: string; coordinates: [number, number] }[];
+  color?: string;
+  opacity?: number;
+}
 
 interface WorldMapProps {
   selectedRegion?: string;
@@ -11,9 +19,11 @@ interface WorldMapProps {
   defaultRoute?: Route;
   optimizedRoute?: Route | null;
   showOptimized: boolean;
+  ports?: Port[];
+  extraRoutes?: ExtraRoute[];
+  showPorts?: boolean;
 }
 
-// Public world atlas topojson (countries-110m) hosted on unpkg
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 const riskColors: Record<string, string> = {
@@ -23,7 +33,18 @@ const riskColors: Record<string, string> = {
   critical: "hsl(0, 90%, 40%)",
 };
 
-const WorldMap = ({ selectedRegion, onRegionClick, defaultRoute, optimizedRoute, showOptimized }: WorldMapProps) => {
+const WorldMap = ({
+  selectedRegion,
+  onRegionClick,
+  defaultRoute,
+  optimizedRoute,
+  showOptimized,
+  ports = allPorts,
+  extraRoutes = [],
+  showPorts = true,
+}: WorldMapProps) => {
+
+
   return (
     <div className="glass-panel p-4 relative overflow-hidden">
       <div className="flex items-center justify-between mb-3">
@@ -89,6 +110,31 @@ const WorldMap = ({ selectedRegion, onRegionClick, defaultRoute, optimizedRoute,
               ))
             }
           </Geographies>
+
+          {/* Additional/background corridor routes */}
+          {extraRoutes.map((r) =>
+            r.points.slice(0, -1).map((pt, i) => (
+              <Line
+                key={`${r.id}-${i}`}
+                from={pt.coordinates}
+                to={r.points[i + 1].coordinates}
+                stroke={r.color ?? "hsl(200, 40%, 55%)"}
+                strokeWidth={1}
+                strokeDasharray="2 3"
+                strokeLinecap="round"
+                opacity={r.opacity ?? 0.35}
+              />
+            ))
+          )}
+
+          {/* Major world ports */}
+          {showPorts && ports.map((port) => (
+            <Marker key={port.id} coordinates={port.coordinates}>
+              <circle r={1.8} fill="hsl(185,60%,70%)" opacity={0.85} />
+              <circle r={0.8} fill="hsl(220,25%,6%)" />
+            </Marker>
+          ))}
+
 
 
 
