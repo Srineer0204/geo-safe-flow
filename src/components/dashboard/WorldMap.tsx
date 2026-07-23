@@ -111,6 +111,31 @@ const WorldMap = ({
             }
           </Geographies>
 
+          {/* Additional/background corridor routes */}
+          {extraRoutes.map((r) =>
+            r.points.slice(0, -1).map((pt, i) => (
+              <Line
+                key={`${r.id}-${i}`}
+                from={pt.coordinates}
+                to={r.points[i + 1].coordinates}
+                stroke={r.color ?? "hsl(200, 40%, 55%)"}
+                strokeWidth={1}
+                strokeDasharray="2 3"
+                strokeLinecap="round"
+                opacity={r.opacity ?? 0.35}
+              />
+            ))
+          )}
+
+          {/* Major world ports */}
+          {showPorts && ports.map((port) => (
+            <Marker key={port.id} coordinates={port.coordinates}>
+              <circle r={1.8} fill="hsl(185,60%,70%)" opacity={0.85} />
+              <circle r={0.8} fill="hsl(220,25%,6%)" />
+            </Marker>
+          ))}
+
+
 
 
 
