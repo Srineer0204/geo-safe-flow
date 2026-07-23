@@ -43,15 +43,7 @@ const WorldMap = ({
   extraRoutes = [],
   showPorts = true,
 }: WorldMapProps) => {
-  selectedRegion,
-  onRegionClick,
-  defaultRoute,
-  optimizedRoute,
-  showOptimized,
-  ports = allPorts,
-  extraRoutes = [],
-  showPorts = true,
-}: WorldMapProps) => {
+
 
   return (
     <div className="glass-panel p-4 relative overflow-hidden">
