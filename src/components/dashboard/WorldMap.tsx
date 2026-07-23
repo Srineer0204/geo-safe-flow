@@ -24,7 +24,25 @@ interface WorldMapProps {
   showPorts?: boolean;
 }
 
+const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+
+const riskColors: Record<string, string> = {
+  low: "hsl(142, 70%, 45%)",
+  medium: "hsl(45, 93%, 55%)",
+  high: "hsl(0, 72%, 55%)",
+  critical: "hsl(0, 90%, 40%)",
+};
+
 const WorldMap = ({
+  selectedRegion,
+  onRegionClick,
+  defaultRoute,
+  optimizedRoute,
+  showOptimized,
+  ports = allPorts,
+  extraRoutes = [],
+  showPorts = true,
+}: WorldMapProps) => {
   selectedRegion,
   onRegionClick,
   defaultRoute,
