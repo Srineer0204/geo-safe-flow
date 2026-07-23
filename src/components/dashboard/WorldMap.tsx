@@ -1,9 +1,17 @@
 import { motion } from "framer-motion";
 import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
 import { regions, type Region, type Route } from "@/data/mockData";
+import { ports as allPorts, type Port } from "@/data/ports";
 
 const MAP_WIDTH = 900;
 const MAP_HEIGHT = 520;
+
+export interface ExtraRoute {
+  id: string;
+  points: { name: string; coordinates: [number, number] }[];
+  color?: string;
+  opacity?: number;
+}
 
 interface WorldMapProps {
   selectedRegion?: string;
@@ -11,19 +19,22 @@ interface WorldMapProps {
   defaultRoute?: Route;
   optimizedRoute?: Route | null;
   showOptimized: boolean;
+  ports?: Port[];
+  extraRoutes?: ExtraRoute[];
+  showPorts?: boolean;
 }
 
-// Public world atlas topojson (countries-110m) hosted on unpkg
-const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+const WorldMap = ({
+  selectedRegion,
+  onRegionClick,
+  defaultRoute,
+  optimizedRoute,
+  showOptimized,
+  ports = allPorts,
+  extraRoutes = [],
+  showPorts = true,
+}: WorldMapProps) => {
 
-const riskColors: Record<string, string> = {
-  low: "hsl(142, 70%, 45%)",
-  medium: "hsl(45, 93%, 55%)",
-  high: "hsl(0, 72%, 55%)",
-  critical: "hsl(0, 90%, 40%)",
-};
-
-const WorldMap = ({ selectedRegion, onRegionClick, defaultRoute, optimizedRoute, showOptimized }: WorldMapProps) => {
   return (
     <div className="glass-panel p-4 relative overflow-hidden">
       <div className="flex items-center justify-between mb-3">
