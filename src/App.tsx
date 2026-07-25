@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { ThemeProvider } from "@/theme/ThemeContext";
+import { AuthProvider } from "@/auth/AuthContext";
+import RequireAuth from "@/auth/RequireAuth";
 import Index from "./pages/Index";
 import RoutesPage from "./pages/RoutesPage";
 import ShipmentsPage from "./pages/ShipmentsPage";
@@ -13,6 +15,7 @@ import SimulationPage from "./pages/SimulationPage";
 import RiskIntelPage from "./pages/RiskIntelPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
+import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,17 +28,20 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/routes" element={<RoutesPage />} />
-              <Route path="/shipments" element={<ShipmentsPage />} />
-              <Route path="/alerts" element={<AlertsPage />} />
-              <Route path="/simulation" element={<SimulationPage />} />
-              <Route path="/risk-intel" element={<RiskIntelPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AuthProvider>
+              <Routes>
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/" element={<RequireAuth><Index /></RequireAuth>} />
+                <Route path="/routes" element={<RequireAuth><RoutesPage /></RequireAuth>} />
+                <Route path="/shipments" element={<RequireAuth><ShipmentsPage /></RequireAuth>} />
+                <Route path="/alerts" element={<RequireAuth><AlertsPage /></RequireAuth>} />
+                <Route path="/simulation" element={<RequireAuth><SimulationPage /></RequireAuth>} />
+                <Route path="/risk-intel" element={<RequireAuth><RiskIntelPage /></RequireAuth>} />
+                <Route path="/profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
+                <Route path="/settings" element={<RequireAuth><SettingsPage /></RequireAuth>} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>
       </LanguageProvider>

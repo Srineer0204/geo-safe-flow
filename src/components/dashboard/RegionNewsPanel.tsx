@@ -108,7 +108,7 @@ const RegionNewsPanel = ({ region, port }: Props) => {
                   <p className="text-sm font-medium text-foreground line-clamp-2">{n.headline}</p>
                   <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{n.summary}</p>
                   <div className="flex items-center justify-between mt-1.5 text-[10px] font-mono text-muted-foreground">
-                    <span>{"region" in n ? n.region : port?.region} • {n.source}</span>
+                    <span>{("region" in n ? (n as { region: string }).region : port?.region) ?? ""} • {n.source}</span>
                     <span>{n.time}</span>
                   </div>
                 </div>
