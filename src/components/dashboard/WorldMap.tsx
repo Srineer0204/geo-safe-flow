@@ -22,6 +22,9 @@ interface WorldMapProps {
   ports?: Port[];
   extraRoutes?: ExtraRoute[];
   showPorts?: boolean;
+  onPortClick?: (port: Port) => void;
+  selectedPortId?: string;
+  showPortLabels?: boolean;
 }
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -42,6 +45,9 @@ const WorldMap = ({
   ports = allPorts,
   extraRoutes = [],
   showPorts = true,
+  onPortClick,
+  selectedPortId,
+  showPortLabels = true,
 }: WorldMapProps) => {
 
 
@@ -128,12 +134,38 @@ const WorldMap = ({
           )}
 
           {/* Major world ports */}
-          {showPorts && ports.map((port) => (
-            <Marker key={port.id} coordinates={port.coordinates}>
-              <circle r={1.8} fill="hsl(185,60%,70%)" opacity={0.85} />
-              <circle r={0.8} fill="hsl(220,25%,6%)" />
-            </Marker>
-          ))}
+          {showPorts && ports.map((port) => {
+            const isSel = selectedPortId === port.id;
+            const isMajor = (port.teuMillions ?? 0) >= 5;
+            return (
+              <Marker
+                key={port.id}
+                coordinates={port.coordinates}
+                onClick={onPortClick ? () => onPortClick(port) : undefined}
+                style={{ default: { cursor: onPortClick ? "pointer" : "default" } }}
+              >
+                <circle
+                  r={isSel ? 3.2 : isMajor ? 2.2 : 1.6}
+                  fill={isSel ? "hsl(45, 93%, 60%)" : "hsl(185,60%,70%)"}
+                  opacity={0.9}
+                />
+                <circle r={0.8} fill="hsl(220,25%,6%)" />
+                {showPortLabels && (isMajor || isSel) && (
+                  <text
+                    x={4}
+                    y={2}
+                    fill={isSel ? "hsl(45, 93%, 65%)" : "hsl(210, 20%, 78%)"}
+                    fontSize={isSel ? 7 : 6}
+                    fontFamily="JetBrains Mono, monospace"
+                    fontWeight={isSel ? 700 : 500}
+                    style={{ pointerEvents: "none" }}
+                  >
+                    {port.name}
+                  </text>
+                )}
+              </Marker>
+            );
+          })}
 
 
 
