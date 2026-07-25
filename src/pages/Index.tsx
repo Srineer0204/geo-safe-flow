@@ -12,13 +12,14 @@ import SeaWeatherPanel from "@/components/dashboard/SeaWeatherPanel";
 import RegionNewsPanel from "@/components/dashboard/RegionNewsPanel";
 import CorridorSelector from "@/components/dashboard/CorridorSelector";
 import { defaultRoute, optimizedRoute, type Route } from "@/data/mockData";
-import { corridors } from "@/data/ports";
+import { corridors, ports as allPorts, type Port } from "@/data/ports";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const Index = () => {
   const [selectedShipment, setSelectedShipment] = useState<string | null>("SHP-001");
   const [showOptimized, setShowOptimized] = useState(false);
   const [corridorId, setCorridorId] = useState<string>("mumbai-rotterdam");
+  const [selectedPort, setSelectedPort] = useState<Port>(() => allPorts.find((p) => p.id === "mumbai") ?? allPorts[0]);
   const { t } = useLanguage();
 
   const active = useMemo(() => corridors.find((c) => c.id === corridorId)!, [corridorId]);
@@ -85,7 +86,12 @@ const Index = () => {
             optimizedRoute={currentOptimized}
             showOptimized={showOptimized}
             extraRoutes={extraRoutes}
+            onPortClick={setSelectedPort}
+            selectedPortId={selectedPort.id}
           />
+          <p className="text-[10px] font-mono text-muted-foreground mt-2 text-center">
+            Tip: click any port marker to load AI-generated live intel for that port.
+          </p>
         </div>
         <div className="xl:col-span-1 min-h-[400px]">
           <AlertsPanel />
@@ -95,7 +101,7 @@ const Index = () => {
       {/* Region news + Sea Weather + Scenario */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="min-h-[520px]">
-          <RegionNewsPanel />
+          <RegionNewsPanel port={{ name: selectedPort.name, country: selectedPort.country, region: selectedPort.region }} />
         </div>
         <div className="min-h-[520px]">
           <SeaWeatherPanel compact />

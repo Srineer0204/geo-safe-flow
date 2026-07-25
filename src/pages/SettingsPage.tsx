@@ -1,4 +1,4 @@
-import { Moon, Sun, Bell, Globe, Shield } from "lucide-react";
+import { Moon, Sun, Bell, Globe, Shield, LogOut } from "lucide-react";
 import PageLayout from "@/components/dashboard/PageLayout";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -7,10 +7,16 @@ import { useTheme } from "@/theme/ThemeContext";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Language, languageNames } from "@/i18n/translations";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ChangePasswordDialog from "@/components/ChangePasswordDialog";
+import { useAuth } from "@/auth/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 
 const SettingsPage = () => {
   const { theme, setTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
+  const { signOut } = useAuth();
+  const nav = useNavigate();
 
   return (
     <PageLayout title="Settings" subtitle="Customize your GeoSafe experience">
@@ -88,7 +94,21 @@ const SettingsPage = () => {
             <Label className="text-xs">Session activity logs</Label>
             <Switch defaultChecked />
           </div>
-          <Button size="sm" variant="outline">Change Password</Button>
+          <div className="flex gap-2 pt-2">
+            <ChangePasswordDialog
+              trigger={<Button size="sm" variant="outline">Change Password</Button>}
+            />
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={async () => {
+                await signOut();
+                nav("/auth", { replace: true });
+              }}
+            >
+              <LogOut className="h-3.5 w-3.5 mr-1" /> Sign out
+            </Button>
+          </div>
         </div>
       </div>
     </PageLayout>
