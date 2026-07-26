@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ComposableMap, Geographies, Geography, Marker, Line, ZoomableGroup } from "react-simple-maps";
+import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
 import { Maximize2, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { regions, type Region, type Route } from "@/data/mockData";
@@ -39,8 +39,6 @@ const riskColors: Record<string, string> = {
   critical: "hsl(0, 90%, 40%)",
 };
 
-/** Split a polyline into segments, breaking any segment that crosses the antimeridian
- * so each half draws cleanly to its edge instead of spanning across the whole map. */
 function splitAntimeridian(
   points: { coordinates: [number, number] }[]
 ): Array<[[number, number], [number, number]]> {
@@ -64,12 +62,12 @@ function splitAntimeridian(
 }
 
 interface MapContentProps extends WorldMapProps {
-  zoomable?: boolean;
   openTooltipId: string | null;
   onTooltip: (id: string | null) => void;
+  splitRoutes?: boolean;
 }
 
-const MapContent = ({
+const MapInner = ({
   selectedRegion,
   onRegionClick,
   defaultRoute,
@@ -80,23 +78,36 @@ const MapContent = ({
   showPorts = true,
   onPortClick,
   selectedPortId,
-  zoomable = false,
   openTooltipId,
   onTooltip,
+  splitRoutes = true,
 }: MapContentProps) => {
-  const inner = (
-    <>
-      {/* Ocean background — click clears tooltip */}
-      <rect
-        x={-2000}
-        y={-2000}
-        width={6000}
-        height={6000}
-        fill="hsl(220,30%,8%)"
-        onClick={() => onTooltip(null)}
-        style={{ cursor: "default" }}
-      />
+  const renderLine = (
+    key: string,
+    from: [number, number],
+    to: [number, number],
+    props: React.ComponentProps<typeof Line>
+  ) => <Line key={key} from={from} to={to} {...props} />;
 
+  const drawRoute = (
+    id: string,
+    pts: { coordinates: [number, number] }[],
+    style: React.ComponentProps<typeof Line>
+  ) => {
+    if (splitRoutes) {
+      return splitAntimeridian(pts).map((seg, i) =>
+        renderLine(`${id}-${i}`, seg[0], seg[1], style)
+      );
+    }
+    const segs: JSX.Element[] = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      segs.push(renderLine(`${id}-${i}`, pts[i].coordinates, pts[i + 1].coordinates, style));
+    }
+    return segs;
+  };
+
+  return (
+    <>
       <Geographies geography={GEO_URL}>
         {({ geographies }) =>
           geographies
@@ -138,23 +149,16 @@ const MapContent = ({
         }
       </Geographies>
 
-      {/* Extra corridor routes (antimeridian-safe) */}
       {extraRoutes.map((r) =>
-        splitAntimeridian(r.points).map((seg, i) => (
-          <Line
-            key={`${r.id}-${i}`}
-            from={seg[0]}
-            to={seg[1]}
-            stroke={r.color ?? "hsl(200, 40%, 55%)"}
-            strokeWidth={1}
-            strokeDasharray="2 3"
-            strokeLinecap="round"
-            opacity={r.opacity ?? 0.35}
-          />
-        ))
+        drawRoute(r.id, r.points, {
+          stroke: r.color ?? "hsl(200, 40%, 55%)",
+          strokeWidth: 1,
+          strokeDasharray: "2 3",
+          strokeLinecap: "round",
+          opacity: r.opacity ?? 0.35,
+        })
       )}
 
-      {/* Ports */}
       {showPorts &&
         ports.map((port) => {
           const isSel = selectedPortId === port.id;
@@ -164,19 +168,28 @@ const MapContent = ({
             <Marker
               key={port.id}
               coordinates={port.coordinates}
+              onMouseEnter={() => onTooltip(port.id)}
+              onMouseLeave={() =>
+                onTooltip(openTooltipId === port.id ? null : openTooltipId)
+              }
               onClick={(e: any) => {
                 e?.stopPropagation?.();
                 onTooltip(port.id);
                 onPortClick?.(port);
               }}
-              style={{ default: { cursor: "pointer" } }}
+              style={{
+                default: { cursor: "pointer" },
+                hover: { cursor: "pointer" },
+                pressed: { cursor: "pointer" },
+              }}
             >
               <circle
                 r={isSel ? 3.4 : isMajor ? 2.4 : 1.8}
                 fill={isSel ? "hsl(45, 93%, 60%)" : "hsl(185,60%,70%)"}
                 opacity={0.95}
+                style={{ cursor: "pointer" }}
               />
-              <circle r={0.8} fill="hsl(220,25%,6%)" />
+              <circle r={0.8} fill="hsl(220,25%,6%)" style={{ cursor: "pointer" }} />
               {showTip && (
                 <g style={{ pointerEvents: "none" }}>
                   <rect
@@ -207,36 +220,23 @@ const MapContent = ({
           );
         })}
 
-      {/* Default route (antimeridian-safe) */}
       {defaultRoute && defaultRoute.points.length > 1 &&
-        splitAntimeridian(defaultRoute.points).map((seg, i) => (
-          <Line
-            key={`d-${i}`}
-            from={seg[0]}
-            to={seg[1]}
-            stroke="hsl(0, 72%, 55%)"
-            strokeWidth={showOptimized ? 1.2 : 2}
-            strokeDasharray="6 4"
-            strokeLinecap="round"
-            opacity={showOptimized ? 0.35 : 0.85}
-          />
-        ))}
+        drawRoute("d", defaultRoute.points, {
+          stroke: "hsl(0, 72%, 55%)",
+          strokeWidth: showOptimized ? 1.2 : 2,
+          strokeDasharray: "6 4",
+          strokeLinecap: "round",
+          opacity: showOptimized ? 0.35 : 0.85,
+        })}
 
-      {/* Optimized route */}
       {showOptimized && optimizedRoute && optimizedRoute.points.length > 1 &&
-        splitAntimeridian(optimizedRoute.points).map((seg, i) => (
-          <Line
-            key={`o-${i}`}
-            from={seg[0]}
-            to={seg[1]}
-            stroke={optimizedRoute.type === "eco" ? "hsl(142, 70%, 50%)" : "hsl(185, 80%, 55%)"}
-            strokeWidth={2.4}
-            strokeLinecap="round"
-            opacity={0.95}
-          />
-        ))}
+        drawRoute("o", optimizedRoute.points, {
+          stroke: optimizedRoute.type === "eco" ? "hsl(142, 70%, 50%)" : "hsl(185, 80%, 55%)",
+          strokeWidth: 2.4,
+          strokeLinecap: "round",
+          opacity: 0.95,
+        })}
 
-      {/* Waypoint markers */}
       {defaultRoute?.points.map((p, i) => (
         <Marker key={`dm-${i}`} coordinates={p.coordinates}>
           <circle r={2} fill="hsl(185,80%,60%)" opacity={0.7} />
@@ -248,7 +248,6 @@ const MapContent = ({
         </Marker>
       ))}
 
-      {/* Region risk pins */}
       {regions.map((region) => {
         const color = riskColors[region.riskLevel];
         const isSelected = selectedRegion === region.id;
@@ -310,29 +309,142 @@ const MapContent = ({
       )}
     </>
   );
+};
+
+/** Flat inline map (Equal Earth projection). */
+const FlatMap = (props: MapContentProps) => (
+  <ComposableMap
+    projection="geoEqualEarth"
+    projectionConfig={{ scale: 155 }}
+    width={MAP_WIDTH}
+    height={MAP_HEIGHT}
+    style={{ width: "100%", height: "100%", display: "block" }}
+  >
+    <rect
+      x={-2000}
+      y={-2000}
+      width={6000}
+      height={6000}
+      fill="hsl(220,30%,8%)"
+      onClick={() => props.onTooltip(null)}
+      style={{ cursor: "default", pointerEvents: "all" }}
+    />
+    <MapInner {...props} />
+  </ComposableMap>
+);
+
+/** Interactive 3D globe (orthographic) with drag-rotate + wheel/pinch zoom. */
+const Globe = (props: MapContentProps) => {
+  const [rot, setRot] = useState<[number, number]>([-20, -15]);
+  const [scale, setScale] = useState(320);
+  const drag = useRef<{ x: number; y: number; rot: [number, number] } | null>(null);
+  const pinch = useRef<{ dist: number; scale: number } | null>(null);
+  const moved = useRef(false);
+
+  const width = MAP_WIDTH;
+  const height = MAP_HEIGHT;
+
+  const startDrag = (x: number, y: number) => {
+    drag.current = { x, y, rot };
+    moved.current = false;
+  };
+  const doDrag = (x: number, y: number) => {
+    if (!drag.current) return;
+    const dx = x - drag.current.x;
+    const dy = y - drag.current.y;
+    if (Math.abs(dx) + Math.abs(dy) > 3) moved.current = true;
+    const k = 0.4 * (320 / scale);
+    setRot([
+      drag.current.rot[0] + dx * k,
+      Math.max(-89, Math.min(89, drag.current.rot[1] + dy * k)),
+    ]);
+  };
+  const endDrag = () => {
+    drag.current = null;
+  };
+
+  const onWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    setScale((s) => Math.max(140, Math.min(1400, s * (e.deltaY < 0 ? 1.12 : 0.9))));
+  };
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      const [a, b] = [e.touches[0], e.touches[1]];
+      pinch.current = { dist: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), scale };
+    } else if (e.touches.length === 1) {
+      startDrag(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  };
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length === 2 && pinch.current) {
+      const [a, b] = [e.touches[0], e.touches[1]];
+      const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      setScale(Math.max(140, Math.min(1400, pinch.current.scale * (d / pinch.current.dist))));
+    } else if (e.touches.length === 1) {
+      doDrag(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  };
+  const onTouchEnd = () => {
+    endDrag();
+    pinch.current = null;
+  };
 
   return (
-    <ComposableMap
-      projection="geoEqualEarth"
-      projectionConfig={{ scale: 155 }}
-      width={MAP_WIDTH}
-      height={MAP_HEIGHT}
-      style={{ width: "100%", height: "100%", display: "block" }}
+    <div
+      className="w-full h-full touch-none select-none"
+      onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
+      onMouseMove={(e) => doDrag(e.clientX, e.clientY)}
+      onMouseUp={endDrag}
+      onMouseLeave={endDrag}
+      onWheel={onWheel}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      style={{ cursor: drag.current ? "grabbing" : "grab" }}
     >
-      {zoomable ? (
-        <ZoomableGroup center={[0, 0]} zoom={1} minZoom={1} maxZoom={8}>
-          {inner}
-        </ZoomableGroup>
-      ) : (
-        inner
-      )}
-    </ComposableMap>
+      <ComposableMap
+        projection="geoOrthographic"
+        projectionConfig={{ rotate: [rot[0], rot[1], 0], scale }}
+        width={width}
+        height={height}
+        style={{ width: "100%", height: "100%", display: "block" }}
+      >
+        <defs>
+          <radialGradient id="globe-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="70%" stopColor="hsl(210,60%,20%)" stopOpacity={0.15} />
+            <stop offset="100%" stopColor="hsl(200,80%,50%)" stopOpacity={0.4} />
+          </radialGradient>
+        </defs>
+        <circle cx={width / 2} cy={height / 2} r={scale} fill="hsl(220,45%,10%)" />
+        <circle
+          cx={width / 2}
+          cy={height / 2}
+          r={scale}
+          fill="url(#globe-glow)"
+          style={{ pointerEvents: "none" }}
+        />
+        <MapInner {...props} splitRoutes={false} />
+        <circle
+          cx={width / 2}
+          cy={height / 2}
+          r={scale}
+          fill="none"
+          stroke="hsl(185,60%,55%)"
+          strokeWidth={0.6}
+          opacity={0.5}
+          style={{ pointerEvents: "none" }}
+        />
+      </ComposableMap>
+    </div>
   );
 };
 
 const WorldMap = (props: WorldMapProps) => {
   const [openTooltipId, setOpenTooltipId] = useState<string | null>(null);
   const [fsOpen, setFsOpen] = useState(false);
+  const [fsTooltipId, setFsTooltipId] = useState<string | null>(null);
+  const pressStart = useRef<{ x: number; y: number } | null>(null);
 
   return (
     <div className="glass-panel p-3 sm:p-4 relative overflow-hidden">
@@ -355,16 +467,16 @@ const WorldMap = (props: WorldMapProps) => {
             <DialogTrigger asChild>
               <button
                 className="p-1.5 rounded-md border border-border/50 hover:bg-secondary/60 transition-colors"
-                aria-label="Open fullscreen map"
+                aria-label="Open fullscreen globe"
               >
                 <Maximize2 className="h-3.5 w-3.5" />
               </button>
             </DialogTrigger>
             <DialogContent className="max-w-none w-screen h-screen p-0 border-0 rounded-none sm:rounded-none translate-x-[-50%] translate-y-[-50%] top-1/2 left-1/2 bg-background flex flex-col">
               <div className="flex items-center justify-between px-4 py-2 border-b border-border/50">
-                <h3 className="text-sm font-semibold uppercase tracking-wider">Global Risk Map</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wider">Global Risk Globe</h3>
                 <div className="text-[10px] font-mono text-muted-foreground hidden sm:block">
-                  Pinch / scroll to zoom · drag to pan
+                  Drag to rotate · scroll / pinch to zoom
                 </div>
                 <DialogClose asChild>
                   <button aria-label="Close" className="p-1.5 rounded-md hover:bg-secondary/60">
@@ -373,11 +485,10 @@ const WorldMap = (props: WorldMapProps) => {
                 </DialogClose>
               </div>
               <div className="flex-1 overflow-hidden bg-[hsl(220,25%,6%)]">
-                <MapContent
+                <Globe
                   {...props}
-                  zoomable
-                  openTooltipId={openTooltipId}
-                  onTooltip={setOpenTooltipId}
+                  openTooltipId={fsTooltipId}
+                  onTooltip={setFsTooltipId}
                 />
               </div>
             </DialogContent>
@@ -385,22 +496,28 @@ const WorldMap = (props: WorldMapProps) => {
         </div>
       </div>
 
-      {/* Tap-to-fullscreen surface on mobile; normal interactive map on desktop */}
-      <div className="rounded-lg overflow-hidden bg-[hsl(220,25%,6%)] border border-border/40 relative">
+      <div
+        className="rounded-lg overflow-hidden bg-[hsl(220,25%,6%)] border border-border/40 relative cursor-pointer"
+        onPointerDown={(e) => {
+          pressStart.current = { x: e.clientX, y: e.clientY };
+        }}
+        onPointerUp={(e) => {
+          const s = pressStart.current;
+          pressStart.current = null;
+          if (!s) return;
+          if (Math.hypot(e.clientX - s.x, e.clientY - s.y) < 6) {
+            setFsTooltipId(openTooltipId);
+            setFsOpen(true);
+          }
+        }}
+      >
         <div className="w-full aspect-[9/5] sm:aspect-auto sm:h-auto">
-          <MapContent
+          <FlatMap
             {...props}
             openTooltipId={openTooltipId}
             onTooltip={setOpenTooltipId}
           />
         </div>
-        {/* Mobile-only tap overlay to open fullscreen */}
-        <button
-          type="button"
-          onClick={() => setFsOpen(true)}
-          className="absolute inset-0 sm:hidden"
-          aria-label="Open map fullscreen"
-        />
       </div>
     </div>
   );
