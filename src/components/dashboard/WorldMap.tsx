@@ -130,7 +130,7 @@ const MapInner = ({
         }
       </Geographies>
 
-      <Geographies geography="https://cdn.jsdelivr.net/gh/geohacker/india@master/state/india_telengana.geojson">
+      <Geographies geography="https://cdn.jsdelivr.net/gh/geohacker/india@master/india.geojson">
         {({ geographies }) =>
           geographies.map((geo) => (
             <Geography
