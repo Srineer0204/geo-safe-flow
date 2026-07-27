@@ -507,7 +507,7 @@ const WorldMap = (props: WorldMapProps) => {
   const [openTooltipId, setOpenTooltipId] = useState<string | null>(null);
   const [fsOpen, setFsOpen] = useState(false);
   const [fsTooltipId, setFsTooltipId] = useState<string | null>(null);
-  const pressStart = useRef<{ x: number; y: number } | null>(null);
+  
 
   return (
     <div className="glass-panel p-3 sm:p-4 relative overflow-hidden">
@@ -559,21 +559,7 @@ const WorldMap = (props: WorldMapProps) => {
         </div>
       </div>
 
-      <div
-        className="rounded-lg overflow-hidden bg-[hsl(220,25%,6%)] border border-border/40 relative cursor-pointer"
-        onPointerDown={(e) => {
-          pressStart.current = { x: e.clientX, y: e.clientY };
-        }}
-        onPointerUp={(e) => {
-          const s = pressStart.current;
-          pressStart.current = null;
-          if (!s) return;
-          if (Math.hypot(e.clientX - s.x, e.clientY - s.y) < 6) {
-            setFsTooltipId(openTooltipId);
-            setFsOpen(true);
-          }
-        }}
-      >
+      <div className="rounded-lg overflow-hidden bg-[hsl(220,25%,6%)] border border-border/40 relative">
         <div className="w-full aspect-[9/5] sm:aspect-auto sm:h-auto">
           <FlatMap
             {...props}
