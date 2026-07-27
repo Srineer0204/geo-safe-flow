@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
-import { Maximize2, X } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Maximize2 } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { regions, type Region, type Route } from "@/data/mockData";
 import { ports as allPorts, type Port } from "@/data/ports";
 
