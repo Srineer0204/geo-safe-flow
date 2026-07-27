@@ -541,11 +541,6 @@ const WorldMap = (props: WorldMapProps) => {
                 <div className="text-[10px] font-mono text-muted-foreground hidden sm:block">
                   Drag to rotate · scroll / pinch to zoom
                 </div>
-                <DialogClose asChild>
-                  <button aria-label="Close" className="p-1.5 rounded-md hover:bg-secondary/60">
-                    <X className="h-4 w-4" />
-                  </button>
-                </DialogClose>
               </div>
               <div className="flex-1 overflow-hidden bg-[hsl(220,25%,6%)]">
                 <Globe
