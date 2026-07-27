@@ -30,7 +30,7 @@ interface WorldMapProps {
   showPortLabels?: boolean;
 }
 
-const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
 const riskColors: Record<string, string> = {
   low: "hsl(142, 70%, 45%)",
