@@ -231,12 +231,19 @@ const MapInner = ({
       {regions.map((region) => {
         const color = riskColors[region.riskLevel];
         const isSelected = selectedRegion === region.id;
+        const regionTipId = `region-${region.id}`;
+        const showLabel = isSelected || openTooltipId === regionTipId;
         return (
           <Marker
             key={region.id}
             coordinates={region.coordinates}
+            onMouseEnter={() => onTooltip(regionTipId)}
+            onMouseLeave={() =>
+              onTooltip(openTooltipId === regionTipId ? null : openTooltipId)
+            }
             onClick={(e: any) => {
               e?.stopPropagation?.();
+              onTooltip(regionTipId);
               onRegionClick?.(region);
             }}
             style={{ default: { cursor: "pointer" } }}
@@ -251,31 +258,34 @@ const MapInner = ({
             />
             <circle r={5} fill={color} opacity={0.9} />
             <circle r={2} fill="hsl(220,20%,7%)" />
-            <text
-              y={-14}
-              textAnchor="middle"
-              fill="hsl(210, 20%, 88%)"
-              fontSize={9}
-              fontFamily="Inter, sans-serif"
-              fontWeight={600}
-              style={{ pointerEvents: "none" }}
-            >
-              {region.name}
-            </text>
-            <text
-              y={16}
-              textAnchor="middle"
-              fill={color}
-              fontSize={8}
-              fontFamily="JetBrains Mono, monospace"
-              fontWeight={600}
-              style={{ pointerEvents: "none" }}
-            >
-              {region.riskScore}%
-            </text>
+            {showLabel && (
+              <g style={{ pointerEvents: "none" }}>
+                <text
+                  y={-14}
+                  textAnchor="middle"
+                  fill="hsl(210, 20%, 88%)"
+                  fontSize={9}
+                  fontFamily="Inter, sans-serif"
+                  fontWeight={600}
+                >
+                  {region.name}
+                </text>
+                <text
+                  y={16}
+                  textAnchor="middle"
+                  fill={color}
+                  fontSize={8}
+                  fontFamily="JetBrains Mono, monospace"
+                  fontWeight={600}
+                >
+                  {region.riskScore}%
+                </text>
+              </g>
+            )}
           </Marker>
         );
       })}
+
 
       {defaultRoute && (
         <>
