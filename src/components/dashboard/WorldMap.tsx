@@ -336,42 +336,99 @@ const FlatMap = (props: MapContentProps) => (
 /** Interactive 3D globe (orthographic) with drag-rotate + wheel/pinch zoom. */
 const Globe = (props: MapContentProps) => {
   const [rot, setRot] = useState<[number, number]>([-20, -15]);
-  const [scale, setScale] = useState(320);
+  const [scale, setScale] = useState(340);
+  const rotRef = useRef(rot);
+  const scaleRef = useRef(scale);
+  const rafRef = useRef<number | null>(null);
   const drag = useRef<{ x: number; y: number; rot: [number, number] } | null>(null);
   const pinch = useRef<{ dist: number; scale: number } | null>(null);
-  const moved = useRef(false);
+  const velocity = useRef<{ x: number; y: number; t: number }>({ x: 0, y: 0, t: 0 });
+  const momentum = useRef<number | null>(null);
 
   const width = MAP_WIDTH;
   const height = MAP_HEIGHT;
 
+  const scheduleUpdate = (nextRot?: [number, number], nextScale?: number) => {
+    if (nextRot) rotRef.current = nextRot;
+    if (nextScale !== undefined) scaleRef.current = nextScale;
+    if (rafRef.current != null) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      setRot(rotRef.current);
+      setScale(scaleRef.current);
+    });
+  };
+
+  const stopMomentum = () => {
+    if (momentum.current != null) {
+      cancelAnimationFrame(momentum.current);
+      momentum.current = null;
+    }
+  };
+
   const startDrag = (x: number, y: number) => {
-    drag.current = { x, y, rot };
-    moved.current = false;
+    stopMomentum();
+    drag.current = { x, y, rot: rotRef.current };
+    velocity.current = { x: 0, y: 0, t: performance.now() };
   };
   const doDrag = (x: number, y: number) => {
     if (!drag.current) return;
     const dx = x - drag.current.x;
     const dy = y - drag.current.y;
-    if (Math.abs(dx) + Math.abs(dy) > 3) moved.current = true;
-    const k = 0.4 * (320 / scale);
-    setRot([
+    const k = 0.35 * (340 / scaleRef.current);
+    const nextRot: [number, number] = [
       drag.current.rot[0] + dx * k,
       Math.max(-89, Math.min(89, drag.current.rot[1] + dy * k)),
-    ]);
+    ];
+    const now = performance.now();
+    const dt = Math.max(1, now - velocity.current.t);
+    velocity.current = {
+      x: (nextRot[0] - rotRef.current[0]) / dt,
+      y: (nextRot[1] - rotRef.current[1]) / dt,
+      t: now,
+    };
+    scheduleUpdate(nextRot);
   };
   const endDrag = () => {
+    if (!drag.current) return;
     drag.current = null;
+    // momentum flick
+    let vx = velocity.current.x;
+    let vy = velocity.current.y;
+    if (Math.hypot(vx, vy) < 0.02) return;
+    let last = performance.now();
+    const step = () => {
+      const now = performance.now();
+      const dt = now - last;
+      last = now;
+      vx *= Math.pow(0.92, dt / 16);
+      vy *= Math.pow(0.92, dt / 16);
+      const next: [number, number] = [
+        rotRef.current[0] + vx * dt,
+        Math.max(-89, Math.min(89, rotRef.current[1] + vy * dt)),
+      ];
+      scheduleUpdate(next);
+      if (Math.hypot(vx, vy) > 0.005) {
+        momentum.current = requestAnimationFrame(step);
+      } else {
+        momentum.current = null;
+      }
+    };
+    momentum.current = requestAnimationFrame(step);
   };
 
   const onWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    setScale((s) => Math.max(140, Math.min(1400, s * (e.deltaY < 0 ? 1.12 : 0.9))));
+    stopMomentum();
+    const next = Math.max(160, Math.min(1600, scaleRef.current * (e.deltaY < 0 ? 1.1 : 0.9)));
+    scheduleUpdate(undefined, next);
   };
 
   const onTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 2) {
       const [a, b] = [e.touches[0], e.touches[1]];
-      pinch.current = { dist: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), scale };
+      pinch.current = { dist: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), scale: scaleRef.current };
+      drag.current = null;
     } else if (e.touches.length === 1) {
       startDrag(e.touches[0].clientX, e.touches[0].clientY);
     }
@@ -380,7 +437,8 @@ const Globe = (props: MapContentProps) => {
     if (e.touches.length === 2 && pinch.current) {
       const [a, b] = [e.touches[0], e.touches[1]];
       const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-      setScale(Math.max(140, Math.min(1400, pinch.current.scale * (d / pinch.current.dist))));
+      const next = Math.max(160, Math.min(1600, pinch.current.scale * (d / pinch.current.dist)));
+      scheduleUpdate(undefined, next);
     } else if (e.touches.length === 1) {
       doDrag(e.touches[0].clientX, e.touches[0].clientY);
     }
@@ -408,15 +466,21 @@ const Globe = (props: MapContentProps) => {
         projectionConfig={{ rotate: [rot[0], rot[1], 0], scale }}
         width={width}
         height={height}
-        style={{ width: "100%", height: "100%", display: "block" }}
+        style={{ width: "100%", height: "100%", display: "block", shapeRendering: "geometricPrecision" }}
       >
         <defs>
+          <radialGradient id="globe-sphere" cx="35%" cy="35%" r="75%">
+            <stop offset="0%" stopColor="hsl(215,45%,16%)" />
+            <stop offset="70%" stopColor="hsl(220,50%,10%)" />
+            <stop offset="100%" stopColor="hsl(222,55%,6%)" />
+          </radialGradient>
           <radialGradient id="globe-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="70%" stopColor="hsl(210,60%,20%)" stopOpacity={0.15} />
-            <stop offset="100%" stopColor="hsl(200,80%,50%)" stopOpacity={0.4} />
+            <stop offset="70%" stopColor="hsl(200,60%,30%)" stopOpacity={0} />
+            <stop offset="100%" stopColor="hsl(190,90%,55%)" stopOpacity={0.35} />
           </radialGradient>
         </defs>
-        <circle cx={width / 2} cy={height / 2} r={scale} fill="hsl(220,45%,10%)" />
+        <circle cx={width / 2} cy={height / 2} r={scale} fill="url(#globe-sphere)" />
+        <MapInner {...props} splitRoutes={false} />
         <circle
           cx={width / 2}
           cy={height / 2}
@@ -424,15 +488,14 @@ const Globe = (props: MapContentProps) => {
           fill="url(#globe-glow)"
           style={{ pointerEvents: "none" }}
         />
-        <MapInner {...props} splitRoutes={false} />
         <circle
           cx={width / 2}
           cy={height / 2}
           r={scale}
           fill="none"
-          stroke="hsl(185,60%,55%)"
-          strokeWidth={0.6}
-          opacity={0.5}
+          stroke="hsl(185,70%,60%)"
+          strokeWidth={0.7}
+          opacity={0.55}
           style={{ pointerEvents: "none" }}
         />
       </ComposableMap>
