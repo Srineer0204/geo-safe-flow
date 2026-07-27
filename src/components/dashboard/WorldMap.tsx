@@ -110,44 +110,24 @@ const MapInner = ({
     <>
       <Geographies geography={GEO_URL}>
         {({ geographies }) =>
-          geographies
-            .filter((geo) => geo.properties?.name !== "India")
-            .map((geo) => (
-              <Geography
-                key={geo.rsmKey}
-                geography={geo}
-                fill="hsl(220,15%,14%)"
-                stroke="hsl(220,15%,22%)"
-                strokeWidth={0.4}
-                onClick={() => onTooltip(null)}
-                style={{
-                  default: { outline: "none" },
-                  hover: { fill: "hsl(220,15%,18%)", outline: "none" },
-                  pressed: { outline: "none" },
-                }}
-              />
-            ))
-        }
-      </Geographies>
-
-      <Geographies geography="https://cdn.jsdelivr.net/gh/geohacker/india@master/india.geojson">
-        {({ geographies }) =>
           geographies.map((geo) => (
             <Geography
               key={geo.rsmKey}
               geography={geo}
               fill="hsl(220,15%,14%)"
               stroke="hsl(220,15%,22%)"
-              strokeWidth={0.3}
+              strokeWidth={0.4}
+              onClick={() => onTooltip(null)}
               style={{
-                default: { outline: "none", pointerEvents: "none" },
-                hover: { outline: "none" },
+                default: { outline: "none" },
+                hover: { fill: "hsl(220,15%,18%)", outline: "none" },
                 pressed: { outline: "none" },
               }}
             />
           ))
         }
       </Geographies>
+
 
       {extraRoutes.map((r) =>
         drawRoute(r.id, r.points, {
