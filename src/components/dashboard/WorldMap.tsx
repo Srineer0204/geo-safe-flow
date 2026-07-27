@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
-import { Maximize2, X } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Maximize2 } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { regions, type Region, type Route } from "@/data/mockData";
 import { ports as allPorts, type Port } from "@/data/ports";
 
@@ -30,7 +30,7 @@ interface WorldMapProps {
   showPortLabels?: boolean;
 }
 
-const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
 const riskColors: Record<string, string> = {
   low: "hsl(142, 70%, 45%)",
@@ -110,44 +110,24 @@ const MapInner = ({
     <>
       <Geographies geography={GEO_URL}>
         {({ geographies }) =>
-          geographies
-            .filter((geo) => geo.properties?.name !== "India")
-            .map((geo) => (
-              <Geography
-                key={geo.rsmKey}
-                geography={geo}
-                fill="hsl(220,15%,14%)"
-                stroke="hsl(220,15%,22%)"
-                strokeWidth={0.4}
-                onClick={() => onTooltip(null)}
-                style={{
-                  default: { outline: "none" },
-                  hover: { fill: "hsl(220,15%,18%)", outline: "none" },
-                  pressed: { outline: "none" },
-                }}
-              />
-            ))
-        }
-      </Geographies>
-
-      <Geographies geography="https://cdn.jsdelivr.net/gh/geohacker/india@master/india.geojson">
-        {({ geographies }) =>
           geographies.map((geo) => (
             <Geography
               key={geo.rsmKey}
               geography={geo}
               fill="hsl(220,15%,14%)"
               stroke="hsl(220,15%,22%)"
-              strokeWidth={0.3}
+              strokeWidth={0.4}
+              onClick={() => onTooltip(null)}
               style={{
-                default: { outline: "none", pointerEvents: "none" },
-                hover: { outline: "none" },
+                default: { outline: "none" },
+                hover: { fill: "hsl(220,15%,18%)", outline: "none" },
                 pressed: { outline: "none" },
               }}
             />
           ))
         }
       </Geographies>
+
 
       {extraRoutes.map((r) =>
         drawRoute(r.id, r.points, {
@@ -251,12 +231,19 @@ const MapInner = ({
       {regions.map((region) => {
         const color = riskColors[region.riskLevel];
         const isSelected = selectedRegion === region.id;
+        const regionTipId = `region-${region.id}`;
+        const showLabel = isSelected || openTooltipId === regionTipId;
         return (
           <Marker
             key={region.id}
             coordinates={region.coordinates}
+            onMouseEnter={() => onTooltip(regionTipId)}
+            onMouseLeave={() =>
+              onTooltip(openTooltipId === regionTipId ? null : openTooltipId)
+            }
             onClick={(e: any) => {
               e?.stopPropagation?.();
+              onTooltip(regionTipId);
               onRegionClick?.(region);
             }}
             style={{ default: { cursor: "pointer" } }}
@@ -271,31 +258,34 @@ const MapInner = ({
             />
             <circle r={5} fill={color} opacity={0.9} />
             <circle r={2} fill="hsl(220,20%,7%)" />
-            <text
-              y={-14}
-              textAnchor="middle"
-              fill="hsl(210, 20%, 88%)"
-              fontSize={9}
-              fontFamily="Inter, sans-serif"
-              fontWeight={600}
-              style={{ pointerEvents: "none" }}
-            >
-              {region.name}
-            </text>
-            <text
-              y={16}
-              textAnchor="middle"
-              fill={color}
-              fontSize={8}
-              fontFamily="JetBrains Mono, monospace"
-              fontWeight={600}
-              style={{ pointerEvents: "none" }}
-            >
-              {region.riskScore}%
-            </text>
+            {showLabel && (
+              <g style={{ pointerEvents: "none" }}>
+                <text
+                  y={-14}
+                  textAnchor="middle"
+                  fill="hsl(210, 20%, 88%)"
+                  fontSize={9}
+                  fontFamily="Inter, sans-serif"
+                  fontWeight={600}
+                >
+                  {region.name}
+                </text>
+                <text
+                  y={16}
+                  textAnchor="middle"
+                  fill={color}
+                  fontSize={8}
+                  fontFamily="JetBrains Mono, monospace"
+                  fontWeight={600}
+                >
+                  {region.riskScore}%
+                </text>
+              </g>
+            )}
           </Marker>
         );
       })}
+
 
       {defaultRoute && (
         <>
@@ -541,11 +531,6 @@ const WorldMap = (props: WorldMapProps) => {
                 <div className="text-[10px] font-mono text-muted-foreground hidden sm:block">
                   Drag to rotate · scroll / pinch to zoom
                 </div>
-                <DialogClose asChild>
-                  <button aria-label="Close" className="p-1.5 rounded-md hover:bg-secondary/60">
-                    <X className="h-4 w-4" />
-                  </button>
-                </DialogClose>
               </div>
               <div className="flex-1 overflow-hidden bg-[hsl(220,25%,6%)]">
                 <Globe
