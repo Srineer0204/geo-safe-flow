@@ -507,7 +507,7 @@ const WorldMap = (props: WorldMapProps) => {
   const [openTooltipId, setOpenTooltipId] = useState<string | null>(null);
   const [fsOpen, setFsOpen] = useState(false);
   const [fsTooltipId, setFsTooltipId] = useState<string | null>(null);
-  const pressStart = useRef<{ x: number; y: number } | null>(null);
+  
 
   return (
     <div className="glass-panel p-3 sm:p-4 relative overflow-hidden">
