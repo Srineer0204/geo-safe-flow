@@ -30,20 +30,23 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <AuthProvider>
-              <Routes>
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/" element={<RequireAuth><Index /></RequireAuth>} />
-                <Route path="/routes" element={<RequireAuth><RoutesPage /></RequireAuth>} />
-                <Route path="/shipments" element={<RequireAuth><ShipmentsPage /></RequireAuth>} />
-                <Route path="/alerts" element={<RequireAuth><AlertsPage /></RequireAuth>} />
-                <Route path="/simulation" element={<RequireAuth><SimulationPage /></RequireAuth>} />
-                <Route path="/risk-intel" element={<RequireAuth><RiskIntelPage /></RequireAuth>} />
-                <Route path="/profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
-                <Route path="/settings" element={<RequireAuth><SettingsPage /></RequireAuth>} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <RoleProvider>
+                <Routes>
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/" element={<RequireAuth><Index /></RequireAuth>} />
+                  <Route path="/routes" element={<RequireAuth><RoutesPage /></RequireAuth>} />
+                  <Route path="/shipments" element={<RequireAuth><ShipmentsPage /></RequireAuth>} />
+                  <Route path="/alerts" element={<RequireAuth><AlertsPage /></RequireAuth>} />
+                  <Route path="/simulation" element={<RequireAuth><SimulationPage /></RequireAuth>} />
+                  <Route path="/risk-intel" element={<RequireAuth><RiskIntelPage /></RequireAuth>} />
+                  <Route path="/profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
+                  <Route path="/settings" element={<RequireAuth><SettingsPage /></RequireAuth>} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </RoleProvider>
             </AuthProvider>
           </BrowserRouter>
+
         </TooltipProvider>
       </LanguageProvider>
     </ThemeProvider>
