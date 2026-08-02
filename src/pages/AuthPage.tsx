@@ -122,6 +122,19 @@ const AuthPage = () => {
               />
             </div>
           </div>
+          {mode === "signup" && (
+            <div className="space-y-1.5">
+              <Label className="text-xs">Your role</Label>
+              <Select value={role} onValueChange={(v) => setRole(v as AppRole)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {APP_ROLES.map((r) => (
+                    <SelectItem key={r} value={r}>{roleLabels[r]}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <Button type="submit" className="w-full" disabled={busy}>
             {busy && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
             {mode === "signin" ? "Sign in" : "Create account"}
