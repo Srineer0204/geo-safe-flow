@@ -60,7 +60,7 @@ const ProfilePage = () => {
             )}
           </div>
           <h2 className="text-lg font-bold">{displayName}</h2>
-          <p className="text-xs text-muted-foreground font-mono">{role}</p>
+          <p className="text-xs text-muted-foreground font-mono">{roleLabel(role)}</p>
           <div className="mt-4 w-full space-y-2 text-xs">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Mail className="h-3.5 w-3.5" /> {email || "—"}
@@ -89,8 +89,17 @@ const ProfilePage = () => {
               <Input value={email} disabled />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Role</Label>
-              <Input value={role} onChange={(e) => setRole(e.target.value)} />
+              <Label className="text-xs flex items-center gap-2">
+                Role {savingRole && <Loader2 className="h-3 w-3 animate-spin" />}
+              </Label>
+              <Select value={currentRole} onValueChange={(v) => changeRole(v as AppRole)} disabled={savingRole}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {APP_ROLES.map((r) => (
+                    <SelectItem key={r} value={r}>{roleLabels[r]}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Region</Label>
