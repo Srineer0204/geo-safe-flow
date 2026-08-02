@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { ThemeProvider } from "@/theme/ThemeContext";
 import { AuthProvider } from "@/auth/AuthContext";
+import { RoleProvider } from "@/auth/useUserRole";
 import RequireAuth from "@/auth/RequireAuth";
 import Index from "./pages/Index";
 import RoutesPage from "./pages/RoutesPage";
