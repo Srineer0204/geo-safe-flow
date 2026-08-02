@@ -5,15 +5,18 @@ import { Shield, Mail, Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/auth/AuthContext";
+import { APP_ROLES, AppRole, roleLabels } from "@/auth/roles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
 const AuthPage = () => {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<AppRole>("logistics_manager");
   const [busy, setBusy] = useState(false);
   const nav = useNavigate();
   const loc = useLocation() as { state?: { from?: string } };
@@ -32,7 +35,7 @@ const AuthPage = () => {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: { emailRedirectTo: window.location.origin, data: { role } },
         });
         if (error) throw error;
         toast.success("Account created — you're signed in.");
@@ -48,6 +51,7 @@ const AuthPage = () => {
       setBusy(false);
     }
   };
+
 
   const google = async () => {
     setBusy(true);
@@ -118,6 +122,19 @@ const AuthPage = () => {
               />
             </div>
           </div>
+          {mode === "signup" && (
+            <div className="space-y-1.5">
+              <Label className="text-xs">Your role</Label>
+              <Select value={role} onValueChange={(v) => setRole(v as AppRole)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {APP_ROLES.map((r) => (
+                    <SelectItem key={r} value={r}>{roleLabels[r]}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <Button type="submit" className="w-full" disabled={busy}>
             {busy && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
             {mode === "signin" ? "Sign in" : "Create account"}

@@ -1,22 +1,44 @@
 import { useState } from "react";
-import { User, Mail, MapPin, Shield, Briefcase, LogOut } from "lucide-react";
+import { User, Mail, MapPin, Shield, Briefcase, LogOut, Loader2 } from "lucide-react";
 import PageLayout from "@/components/dashboard/PageLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/auth/AuthContext";
+import { useUserRole } from "@/auth/useUserRole";
+import { APP_ROLES, AppRole, roleLabel, roleLabels } from "@/auth/roles";
 import ChangePasswordDialog from "@/components/ChangePasswordDialog";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const ProfilePage = () => {
   const { user, signOut } = useAuth();
+  const { role, saveRole } = useUserRole();
   const nav = useNavigate();
   const email = user?.email ?? "";
   const meta = (user?.user_metadata ?? {}) as Record<string, string | undefined>;
   const displayName = meta.full_name || meta.name || email.split("@")[0] || "User";
   const [name, setName] = useState(displayName);
   const [region, setRegion] = useState((meta.region as string) || "EMEA");
-  const [role, setRole] = useState((meta.role as string) || "Logistics Manager");
+  const [pendingRole, setPendingRole] = useState<AppRole | null>(null);
+  const [savingRole, setSavingRole] = useState(false);
+
+  const currentRole = (pendingRole ?? role ?? "logistics_manager") as AppRole;
+
+  const changeRole = async (r: AppRole) => {
+    setPendingRole(r);
+    setSavingRole(true);
+    try {
+      await saveRole(r);
+      toast.success(`Role updated to ${roleLabels[r]}`);
+    } catch (err: unknown) {
+      setPendingRole(null);
+      toast.error(err instanceof Error ? err.message : "Could not update role");
+    } finally {
+      setSavingRole(false);
+    }
+  };
 
   const initials = displayName
     .split(" ")
@@ -24,6 +46,7 @@ const ProfilePage = () => {
     .join("")
     .slice(0, 2)
     .toUpperCase();
+
 
   return (
     <PageLayout title="Profile" subtitle="Manage your account information">
@@ -37,7 +60,7 @@ const ProfilePage = () => {
             )}
           </div>
           <h2 className="text-lg font-bold">{displayName}</h2>
-          <p className="text-xs text-muted-foreground font-mono">{role}</p>
+          <p className="text-xs text-muted-foreground font-mono">{roleLabel(role)}</p>
           <div className="mt-4 w-full space-y-2 text-xs">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Mail className="h-3.5 w-3.5" /> {email || "—"}
@@ -66,8 +89,17 @@ const ProfilePage = () => {
               <Input value={email} disabled />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Role</Label>
-              <Input value={role} onChange={(e) => setRole(e.target.value)} />
+              <Label className="text-xs flex items-center gap-2">
+                Role {savingRole && <Loader2 className="h-3 w-3 animate-spin" />}
+              </Label>
+              <Select value={currentRole} onValueChange={(v) => changeRole(v as AppRole)} disabled={savingRole}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {APP_ROLES.map((r) => (
+                    <SelectItem key={r} value={r}>{roleLabels[r]}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Region</Label>
