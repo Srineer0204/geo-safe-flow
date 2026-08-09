@@ -65,34 +65,8 @@ const SettingsPage = () => {
 
         <div className="glass-panel p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <Bell className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-semibold uppercase tracking-wider">Notifications</h3>
-          </div>
-          {[
-            { id: "risk", label: "High-risk region alerts", def: true },
-            { id: "weather", label: "Severe sea weather warnings", def: true },
-            { id: "reroute", label: "Auto-reroute notifications", def: false },
-            { id: "digest", label: "Daily digest email", def: true },
-          ].map((n) => (
-            <div key={n.id} className="flex items-center justify-between">
-              <Label htmlFor={n.id} className="text-xs">{n.label}</Label>
-              <Switch id={n.id} defaultChecked={n.def} />
-            </div>
-          ))}
-        </div>
-
-        <div className="glass-panel p-6 space-y-4">
-          <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-primary" />
             <h3 className="text-sm font-semibold uppercase tracking-wider">Security</h3>
-          </div>
-          <div className="flex items-center justify-between">
-            <Label className="text-xs">Two-factor authentication</Label>
-            <Switch defaultChecked />
-          </div>
-          <div className="flex items-center justify-between">
-            <Label className="text-xs">Session activity logs</Label>
-            <Switch defaultChecked />
           </div>
           <div className="flex gap-2 pt-2">
             <ChangePasswordDialog
