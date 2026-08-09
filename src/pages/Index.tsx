@@ -92,6 +92,7 @@ const Index = () => {
           <p className="text-[10px] font-mono text-muted-foreground mt-2 text-center">
             Tip: click any port marker to load AI-generated live intel for that port.
           </p>
+          <RouteComparison showOptimized={showOptimized} onToggle={() => setShowOptimized(!showOptimized)} />
         </div>
         <div className="xl:col-span-1 min-h-[400px]">
           <AlertsPanel />
