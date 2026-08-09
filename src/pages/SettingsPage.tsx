@@ -1,8 +1,6 @@
-import { Moon, Sun, Bell, Globe, Shield, LogOut } from "lucide-react";
+import { Moon, Sun, Globe, Shield, LogOut } from "lucide-react";
 import PageLayout from "@/components/dashboard/PageLayout";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { useTheme } from "@/theme/ThemeContext";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Language, languageNames } from "@/i18n/translations";
