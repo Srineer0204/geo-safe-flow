@@ -545,7 +545,7 @@ const WorldMap = (props: WorldMapProps) => {
       </div>
 
       <div className="rounded-lg overflow-hidden bg-[hsl(220,25%,6%)] border border-border/40 relative">
-        <div className="w-full aspect-[9/5] sm:aspect-auto sm:h-auto">
+        <div className="w-full aspect-[16/9]">
           <FlatMap
             {...props}
             openTooltipId={openTooltipId}
