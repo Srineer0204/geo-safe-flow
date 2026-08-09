@@ -110,8 +110,7 @@ const Index = () => {
         <ScenarioPanel />
       </div>
 
-      {/* Route + Shipments + Chart */}
-      <RouteComparison showOptimized={showOptimized} onToggle={() => setShowOptimized(!showOptimized)} />
+      {/* Shipments + Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <ShipmentList selectedShipment={selectedShipment} onSelect={setSelectedShipment} />
         <RiskChart />
