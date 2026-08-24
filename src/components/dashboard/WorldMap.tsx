@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
 import { Maximize2 } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { regions, type Region, type Route } from "@/data/mockData";
 import { ports as allPorts, type Port } from "@/data/ports";
 
@@ -527,10 +527,12 @@ const WorldMap = (props: WorldMapProps) => {
             </DialogTrigger>
             <DialogContent className="max-w-none w-screen h-screen p-0 border-0 rounded-none sm:rounded-none translate-x-[-50%] translate-y-[-50%] top-1/2 left-1/2 bg-background flex flex-col">
               <div className="flex items-center justify-between px-4 py-2 border-b border-border/50">
-                <h3 className="text-sm font-semibold uppercase tracking-wider">Global Risk Globe</h3>
-                <div className="text-[10px] font-mono text-muted-foreground hidden sm:block">
+                <DialogTitle className="text-sm font-semibold uppercase tracking-wider">
+                  Global Risk Globe
+                </DialogTitle>
+                <DialogDescription className="text-[10px] font-mono text-muted-foreground hidden sm:block">
                   Drag to rotate · scroll / pinch to zoom
-                </div>
+                </DialogDescription>
               </div>
               <div className="flex-1 overflow-hidden bg-[hsl(220,25%,6%)]">
                 <Globe
