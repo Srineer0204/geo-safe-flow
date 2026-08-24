@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useAuth } from "@/auth/AuthContext";
 
@@ -71,6 +71,11 @@ const ChangePasswordDialog = ({ trigger }: { trigger: React.ReactNode }) => {
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>{hasPassword ? "Change password" : "Set password"}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {hasPassword
+              ? "Confirm your current password, then choose a new one."
+              : "Choose a password to also sign in with email."}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-3">
           {hasPassword ? (
