@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
 import { Maximize2 } from "lucide-react";
@@ -407,12 +407,21 @@ const Globe = (props: MapContentProps) => {
     momentum.current = requestAnimationFrame(step);
   };
 
-  const onWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    stopMomentum();
-    const next = Math.max(160, Math.min(1600, scaleRef.current * (e.deltaY < 0 ? 1.1 : 0.9)));
-    scheduleUpdate(undefined, next);
-  };
+  // Wheel zoom needs preventDefault, which React's passive wheel listener forbids;
+  // attach a non-passive native listener instead.
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      e.preventDefault();
+      stopMomentum();
+      const next = Math.max(160, Math.min(1600, scaleRef.current * (e.deltaY < 0 ? 1.1 : 0.9)));
+      scheduleUpdate(undefined, next);
+    };
+    el.addEventListener("wheel", handler, { passive: false });
+    return () => el.removeEventListener("wheel", handler);
+  }, []);
 
   const onTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 2) {
@@ -440,12 +449,12 @@ const Globe = (props: MapContentProps) => {
 
   return (
     <div
+      ref={containerRef}
       className="w-full h-full touch-none select-none"
       onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
       onMouseMove={(e) => doDrag(e.clientX, e.clientY)}
       onMouseUp={endDrag}
       onMouseLeave={endDrag}
-      onWheel={onWheel}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
