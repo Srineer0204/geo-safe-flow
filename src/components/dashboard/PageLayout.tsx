@@ -1,22 +1,31 @@
 import { ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
+import Seo from "@/components/Seo";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 interface PageLayoutProps {
   children: ReactNode;
   title: string;
   subtitle?: string;
+  seoTitle?: string;
+  seoDescription?: string;
 }
 
-const PageLayout = ({ children, title, subtitle }: PageLayoutProps) => {
+const PageLayout = ({ children, title, subtitle, seoTitle, seoDescription }: PageLayoutProps) => {
   const { t } = useLanguage();
+  const { pathname } = useLocation();
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
+      {seoTitle && seoDescription && (
+        <Seo title={seoTitle} description={seoDescription} path={pathname} />
+      )}
       <Sidebar />
       <main className="flex-1 overflow-y-auto">
+
         <header className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border/50 flex flex-wrap items-center justify-between gap-3 bg-background/80 backdrop-blur-sm sticky top-0 z-10">
           <div className="min-w-0">
             <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">{title}</h1>
