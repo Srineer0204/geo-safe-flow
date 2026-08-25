@@ -126,7 +126,7 @@ const ShipmentsPage = () => {
               className="glass-panel p-5 h-fit sticky top-24"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wider">{t("shipments.details")}</h3>
+                <h2 className="text-sm font-semibold uppercase tracking-wider">{t("shipments.details")}</h2>
                 <button onClick={() => setSelected(null)} className="p-1 rounded hover:bg-secondary">
                   <X className="h-4 w-4 text-muted-foreground" />
                 </button>
