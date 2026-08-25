@@ -65,7 +65,7 @@ const Index = () => {
     <PageLayout
       seoTitle="GeoSafe Logistics Operations Dashboard — Live Risk & Route Overview"
       seoDescription="Monitor active shipments, regional risk scores, alerts and optimized global shipping corridors from one real-time operations dashboard."
-      title={t("nav.dashboard")}
+      title={`GeoSafe ${t("nav.dashboard")} — Global Operations`}
       subtitle={`${t("header.lastUpdated")}: ${new Date().toLocaleString()} • ${corridors.length} global corridors`}
     >
       {/* Metrics */}
