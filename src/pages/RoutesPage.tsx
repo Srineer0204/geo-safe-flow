@@ -128,7 +128,7 @@ const RoutesPage = () => {
             onClick={() => setSelectedType(key as RouteType)}
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold">{route.name}</h3>
+              <h2 className="text-sm font-semibold">{route.name}</h2>
               {key === "eco" && (
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-risk-low/20 text-risk-low font-medium">
                   {t("routes.recommended")}
