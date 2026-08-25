@@ -36,7 +36,9 @@ const ShipmentsPage = () => {
   const uniqueRegions = [...new Set(shipments.map((s) => s.region))];
 
   return (
-    <PageLayout title={t("shipments.all")} subtitle={`${shipments.length} ${t("header.activeShipments")}`}>
+    <PageLayout
+      seoTitle="Shipment Tracking — Status, Risk & Emissions | GeoSafe Logistics"
+      seoDescription="Track every shipment's status, route, risk level, fuel use and CO2 emissions across global trade lanes in real time." title={t("shipments.all")} subtitle={`${shipments.length} ${t("header.activeShipments")}`}>
       {/* Filters */}
       <div className="flex gap-3 flex-wrap">
         <select
@@ -126,7 +128,7 @@ const ShipmentsPage = () => {
               className="glass-panel p-5 h-fit sticky top-24"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wider">{t("shipments.details")}</h3>
+                <h2 className="text-sm font-semibold uppercase tracking-wider">{t("shipments.details")}</h2>
                 <button onClick={() => setSelected(null)} className="p-1 rounded hover:bg-secondary">
                   <X className="h-4 w-4 text-muted-foreground" />
                 </button>

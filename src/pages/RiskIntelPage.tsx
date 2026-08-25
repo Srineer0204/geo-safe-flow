@@ -25,13 +25,15 @@ const RiskIntelPage = () => {
   const sortedRegions = [...regions].sort((a, b) => b.riskScore - a.riskScore);
 
   return (
-    <PageLayout title={t("riskIntel.title")} subtitle="Real-time geopolitical & operational risk monitoring">
+    <PageLayout
+      seoTitle="Risk Intelligence — Geopolitical & Operational Risk Scores | GeoSafe"
+      seoDescription="Regional risk scores across political instability, weather, port congestion and labor strikes, updated in real time." title={t("riskIntel.title")} subtitle="Real-time geopolitical & operational risk monitoring">
       {/* Region risk breakdown */}
       <div>
-        <h3 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
+        <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
           <Shield className="h-4 w-4 text-primary" />
           {t("riskIntel.byRegion")}
-        </h3>
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {sortedRegions.map((region, i) => (
             <motion.div
@@ -75,10 +77,10 @@ const RiskIntelPage = () => {
 
       {/* Risk factors */}
       <div>
-        <h3 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
+        <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
           <TrendingUp className="h-4 w-4 text-primary" />
           {t("riskIntel.factors")}
-        </h3>
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {riskFactorData.map((factor, i) => (
             <motion.div
@@ -116,10 +118,10 @@ const RiskIntelPage = () => {
 
       {/* Trend chart */}
       <div>
-        <h3 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
+        <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
           <TrendingUp className="h-4 w-4 text-primary" />
           {t("riskIntel.trends")}
-        </h3>
+        </h2>
         <RiskChart />
       </div>
     </PageLayout>

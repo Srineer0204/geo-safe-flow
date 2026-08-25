@@ -23,14 +23,16 @@ const SimulationPage = () => {
   };
 
   return (
-    <PageLayout title={t("simulation.title")} subtitle="Digital Twin Engine">
+    <PageLayout
+      seoTitle="Digital Twin Simulation — What-If Scenario Modeling | GeoSafe Logistics"
+      seoDescription="Simulate port closures, conflicts and weather disruptions to see instant impact on route, cost, delay and emissions." title={t("simulation.title")} subtitle="Digital Twin Engine">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Scenario selector */}
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+          <h2 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
             <Zap className="h-4 w-4 text-primary" />
             {t("simulation.select")}
-          </h3>
+          </h2>
           {scenarios.map((s) => (
             <motion.div
               key={s.id}
@@ -79,10 +81,10 @@ const SimulationPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
               >
-                <h3 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
+                <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
                   <Shield className="h-4 w-4 text-primary" />
                   {t("simulation.impact")} — {selectedScenario.name}
-                </h3>
+                </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="glass-panel p-4 text-center">
                     <Clock className="h-5 w-5 text-risk-medium mx-auto mb-2" />

@@ -5,10 +5,10 @@ import { TrendingUp } from "lucide-react";
 const RiskChart = () => {
   return (
     <div className="glass-panel p-4">
-      <h3 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
+      <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
         <TrendingUp className="h-4 w-4 text-primary" />
         Risk Trends (6 months)
-      </h3>
+      </h2>
       <div className="h-48">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={riskTrendData}>

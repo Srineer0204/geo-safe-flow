@@ -50,7 +50,7 @@ const AlertsPanel = () => {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Bell className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-semibold uppercase tracking-wider">Alerts</h3>
+          <h2 className="text-sm font-semibold uppercase tracking-wider">Alerts</h2>
         </div>
         {newCount > 0 && (
           <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-destructive text-destructive-foreground">

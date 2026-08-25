@@ -49,7 +49,9 @@ const ProfilePage = () => {
 
 
   return (
-    <PageLayout title="Profile" subtitle="Manage your account information">
+    <PageLayout
+      seoTitle="Your Profile & Role Settings | GeoSafe Logistics"
+      seoDescription="Manage your GeoSafe account details, operational role and password." title="Your GeoSafe Profile" subtitle="Manage your account information">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="glass-panel p-6 flex flex-col items-center text-center">
           <div className="w-24 h-24 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center mb-4">
@@ -78,7 +80,7 @@ const ProfilePage = () => {
         </div>
 
         <div className="glass-panel p-6 lg:col-span-2 space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider">Account Details</h3>
+          <h2 className="text-sm font-semibold uppercase tracking-wider">Account Details</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label className="text-xs">Full Name</Label>

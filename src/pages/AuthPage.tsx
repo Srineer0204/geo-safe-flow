@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/auth/AuthContext";
 import { APP_ROLES, AppRole, roleLabels } from "@/auth/roles";
+import Seo from "@/components/Seo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -67,6 +68,11 @@ const AuthPage = () => {
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6 bg-background">
+      <Seo
+        title="Sign In or Create Account | GeoSafe Logistics"
+        description="Access the GeoSafe Logistics platform to monitor geopolitical risk, optimize shipping routes and simulate disruption scenarios."
+        path="/auth"
+      />
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

@@ -17,12 +17,14 @@ const SettingsPage = () => {
   const nav = useNavigate();
 
   return (
-    <PageLayout title="Settings" subtitle="Customize your GeoSafe experience">
+    <PageLayout
+      seoTitle="Settings — Theme, Language & Security | GeoSafe Logistics"
+      seoDescription="Customize your GeoSafe experience: appearance, interface language and account security options." title="Settings" subtitle="Customize your GeoSafe experience">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="glass-panel p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Sun className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-semibold uppercase tracking-wider">Appearance</h3>
+            <h2 className="text-sm font-semibold uppercase tracking-wider">Appearance</h2>
           </div>
           <p className="text-xs text-muted-foreground">Choose how GeoSafe looks to you.</p>
           <div className="grid grid-cols-2 gap-3">
@@ -48,7 +50,7 @@ const SettingsPage = () => {
         <div className="glass-panel p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Globe className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-semibold uppercase tracking-wider">Language</h3>
+            <h2 className="text-sm font-semibold uppercase tracking-wider">Language</h2>
           </div>
           <p className="text-xs text-muted-foreground">Interface language for the dashboard.</p>
           <Select value={language} onValueChange={(v) => setLanguage(v as Language)}>
@@ -64,7 +66,7 @@ const SettingsPage = () => {
         <div className="glass-panel p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-semibold uppercase tracking-wider">Security</h3>
+            <h2 className="text-sm font-semibold uppercase tracking-wider">Security</h2>
           </div>
           <div className="flex gap-2 pt-2">
             <ChangePasswordDialog
