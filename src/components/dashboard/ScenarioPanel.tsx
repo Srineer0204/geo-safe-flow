@@ -8,10 +8,10 @@ const ScenarioPanel = () => {
 
   return (
     <div className="glass-panel p-4">
-      <h3 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
+      <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
         <Zap className="h-4 w-4 text-primary" />
         What-If Simulation
-      </h3>
+      </h2>
       <div className="grid grid-cols-2 gap-2 mb-3">
         {scenarios.map((s) => (
           <button

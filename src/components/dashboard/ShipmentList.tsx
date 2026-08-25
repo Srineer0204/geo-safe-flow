@@ -17,10 +17,10 @@ const statusColors: Record<string, string> = {
 const ShipmentList = ({ selectedShipment, onSelect }: ShipmentListProps) => {
   return (
     <div className="glass-panel p-4">
-      <h3 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
+      <h2 className="text-sm font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
         <Ship className="h-4 w-4 text-primary" />
         Active Shipments
-      </h3>
+      </h2>
       <div className="space-y-2">
         {shipments.map((s, i) => (
           <motion.div

@@ -63,9 +63,9 @@ const RegionNewsPanel = ({ region, port }: Props) => {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Newspaper className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-semibold uppercase tracking-wider">
+          <h2 className="text-sm font-semibold uppercase tracking-wider">
             {port ? `${port.name} Intel` : "Regional Intel Feed"}
-          </h3>
+          </h2>
         </div>
         <div className="flex items-center gap-2">
           {port && (

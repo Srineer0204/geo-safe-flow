@@ -21,10 +21,10 @@ const RouteComparison = ({ showOptimized, onToggle }: RouteComparisonProps) => {
   return (
     <div className="glass-panel p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+        <h2 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
           <RouteIcon className="h-4 w-4 text-primary" />
           Route Analysis
-        </h3>
+        </h2>
         <Button
           size="sm"
           variant={showOptimized ? "default" : "outline"}
