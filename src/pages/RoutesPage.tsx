@@ -63,7 +63,9 @@ const RoutesPage = () => {
   ];
 
   return (
-    <PageLayout title={t("routes.title")}>
+    <PageLayout
+      seoTitle="Route Optimization — Compare Fastest, Safest & Eco Shipping Routes | GeoSafe"
+      seoDescription="Compare shortest, safest and lowest-emission shipping routes across major global corridors with live sea weather and regional intel." title={t("routes.title")}>
       <CorridorSelector value={corridorId} onChange={setCorridorId} />
 
       {/* Route type selector */}

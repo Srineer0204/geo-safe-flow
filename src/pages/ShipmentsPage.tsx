@@ -36,7 +36,9 @@ const ShipmentsPage = () => {
   const uniqueRegions = [...new Set(shipments.map((s) => s.region))];
 
   return (
-    <PageLayout title={t("shipments.all")} subtitle={`${shipments.length} ${t("header.activeShipments")}`}>
+    <PageLayout
+      seoTitle="Shipment Tracking — Status, Risk & Emissions | GeoSafe Logistics"
+      seoDescription="Track every shipment's status, route, risk level, fuel use and CO2 emissions across global trade lanes in real time." title={t("shipments.all")} subtitle={`${shipments.length} ${t("header.activeShipments")}`}>
       {/* Filters */}
       <div className="flex gap-3 flex-wrap">
         <select

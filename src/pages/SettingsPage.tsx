@@ -17,7 +17,9 @@ const SettingsPage = () => {
   const nav = useNavigate();
 
   return (
-    <PageLayout title="Settings" subtitle="Customize your GeoSafe experience">
+    <PageLayout
+      seoTitle="Settings — Theme, Language & Security | GeoSafe Logistics"
+      seoDescription="Customize your GeoSafe experience: appearance, interface language and account security options." title="Settings" subtitle="Customize your GeoSafe experience">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="glass-panel p-6 space-y-4">
           <div className="flex items-center gap-2">

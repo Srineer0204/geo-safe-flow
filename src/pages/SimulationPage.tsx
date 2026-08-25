@@ -23,7 +23,9 @@ const SimulationPage = () => {
   };
 
   return (
-    <PageLayout title={t("simulation.title")} subtitle="Digital Twin Engine">
+    <PageLayout
+      seoTitle="Digital Twin Simulation — What-If Scenario Modeling | GeoSafe Logistics"
+      seoDescription="Simulate port closures, conflicts and weather disruptions to see instant impact on route, cost, delay and emissions." title={t("simulation.title")} subtitle="Digital Twin Engine">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Scenario selector */}
         <div className="space-y-3">

@@ -22,7 +22,9 @@ const AlertsPage = () => {
     : alerts;
 
   return (
-    <PageLayout title={t("alerts.title")} subtitle={`${alerts.filter((a) => a.isNew).length} new alerts`}>
+    <PageLayout
+      seoTitle="Real-Time Logistics Alerts — Port, Weather & Geopolitical Disruptions | GeoSafe"
+      seoDescription="Live alerts for port congestion, strikes, storms and geopolitical events affecting your shipments, with rerouting recommendations." title={t("alerts.title")} subtitle={`${alerts.filter((a) => a.isNew).length} new alerts`}>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
         {/* Map */}
         <WorldMap
