@@ -148,6 +148,9 @@ const MapInner = ({
             <Marker
               key={port.id}
               coordinates={port.coordinates}
+              role="button"
+              tabIndex={0}
+              aria-label={`Port ${port.name}`}
               onMouseEnter={() => onTooltip(port.id)}
               onMouseLeave={() =>
                 onTooltip(openTooltipId === port.id ? null : openTooltipId)
@@ -218,12 +221,12 @@ const MapInner = ({
         })}
 
       {defaultRoute?.points.map((p, i) => (
-        <Marker key={`dm-${i}`} coordinates={p.coordinates}>
+        <Marker key={`dm-${i}`} coordinates={p.coordinates} aria-hidden="true">
           <circle r={2} fill="hsl(185,80%,60%)" opacity={0.7} />
         </Marker>
       ))}
       {showOptimized && optimizedRoute?.points.map((p, i) => (
-        <Marker key={`om-${i}`} coordinates={p.coordinates}>
+        <Marker key={`om-${i}`} coordinates={p.coordinates} aria-hidden="true">
           <circle r={2.5} fill={optimizedRoute.type === "eco" ? "hsl(142,70%,55%)" : "hsl(185,80%,65%)"} />
         </Marker>
       ))}
@@ -237,6 +240,9 @@ const MapInner = ({
           <Marker
             key={region.id}
             coordinates={region.coordinates}
+            role="button"
+            tabIndex={0}
+            aria-label={`${region.name} region, risk score ${region.riskScore} percent`}
             onMouseEnter={() => onTooltip(regionTipId)}
             onMouseLeave={() =>
               onTooltip(openTooltipId === regionTipId ? null : openTooltipId)
@@ -289,10 +295,10 @@ const MapInner = ({
 
       {defaultRoute && (
         <>
-          <Marker coordinates={defaultRoute.points[0].coordinates}>
+          <Marker coordinates={defaultRoute.points[0].coordinates} aria-label="Route origin">
             <circle r={4.5} fill="hsl(185,80%,55%)" stroke="hsl(220,20%,7%)" strokeWidth={1.5} />
           </Marker>
-          <Marker coordinates={defaultRoute.points[defaultRoute.points.length - 1].coordinates}>
+          <Marker coordinates={defaultRoute.points[defaultRoute.points.length - 1].coordinates} aria-label="Route destination">
             <circle r={4.5} fill="hsl(185,80%,55%)" stroke="hsl(220,20%,7%)" strokeWidth={1.5} />
           </Marker>
         </>
