@@ -80,7 +80,7 @@ const AuthPage = () => {
       >
         <div className="flex items-center gap-2 mb-6">
           <Shield className="h-5 w-5 text-primary" />
-          <h1 className="text-lg font-bold tracking-tight">GeoSafe Logistics</h1>
+           <h1 className="text-lg font-bold tracking-tight">GeoSafe Logistics — Operations Sign In</h1>
         </div>
         <h2 className="text-xl font-semibold mb-1">
           {mode === "signin" ? "Sign in" : "Create account"}
@@ -100,10 +100,11 @@ const AuthPage = () => {
 
         <form onSubmit={submit} className="space-y-3">
           <div className="space-y-1.5">
-            <Label className="text-xs">Email</Label>
+             <Label htmlFor="auth-email" className="text-xs">Email</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
+                id="auth-email"
                 type="email"
                 required
                 value={email}
@@ -114,10 +115,11 @@ const AuthPage = () => {
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Password</Label>
+             <Label htmlFor="auth-password" className="text-xs">Password</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
+                id="auth-password"
                 type="password"
                 required
                 minLength={8}

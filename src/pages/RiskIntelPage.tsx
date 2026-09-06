@@ -44,7 +44,7 @@ const RiskIntelPage = () => {
               className="glass-panel p-4"
             >
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-sm font-semibold">{region.name}</h4>
+                  <h3 className="text-sm font-semibold">{region.name}</h3>
                 <span className={`text-xs font-mono font-medium ${riskColors[region.riskLevel]}`}>
                   {region.riskScore}%
                 </span>
@@ -95,7 +95,7 @@ const RiskIntelPage = () => {
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-semibold">{factor.name}</h4>
+                  <h3 className="text-sm font-semibold">{factor.name}</h3>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-mono font-semibold">{factor.score}%</span>
                     <span className={`text-xs ${factor.trend.startsWith("+") ? "text-risk-high" : "text-risk-low"}`}>

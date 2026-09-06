@@ -35,6 +35,7 @@ const Sidebar = () => {
             key={item.path}
             to={item.path}
             end={item.path === "/"}
+            aria-label={t(item.labelKey)}
             className={({ isActive }) =>
               `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
                 isActive
@@ -56,6 +57,7 @@ const Sidebar = () => {
       <div className="p-2 border-t border-sidebar-border">
         <NavLink
           to="/settings"
+          aria-label={t("nav.settings")}
           className={({ isActive }) =>
             `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
               isActive
