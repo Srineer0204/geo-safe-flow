@@ -123,19 +123,6 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {[
-          { label: "Shipments Managed", value: "142" },
-          { label: "Routes Optimized", value: "89" },
-          { label: "CO₂ Saved", value: "18.4t" },
-        ].map((s) => (
-          <div key={s.label} className="glass-panel p-4">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">{s.label}</p>
-            <p className="text-2xl font-bold mt-1 font-mono">{s.value}</p>
-          </div>
-        ))}
-      </div>
     </PageLayout>
   );
 };
