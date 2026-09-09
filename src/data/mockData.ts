@@ -26,17 +26,6 @@ export interface Shipment {
   region: string;
 }
 
-export interface Alert {
-  id: string;
-  type: "warning" | "danger" | "info";
-  title: string;
-  message: string;
-  region: string;
-  time: string;
-  isNew: boolean;
-  severity: RiskLevel;
-}
-
 export interface RoutePoint {
   name: string;
   /** [longitude, latitude] */
@@ -104,16 +93,6 @@ export const shipments: Shipment[] = [
   { id: "SHP-004", name: "Singapore → Los Angeles", origin: "Singapore", destination: "Los Angeles", status: "Delayed", riskLevel: "medium", eta: "Apr 20, 2026", cargo: "Textiles", vessel: "MV Pacific Star", progress: 48, co2: 1680, fuelConsumption: 610, region: "Southeast Asia" },
   { id: "SHP-005", name: "Rotterdam → Mumbai", origin: "Rotterdam", destination: "Mumbai", status: "Delivered", riskLevel: "low", eta: "Mar 28, 2026", cargo: "Pharmaceuticals", vessel: "MV Meridian", progress: 100, co2: 1100, fuelConsumption: 420, region: "Europe" },
   { id: "SHP-006", name: "Dubai → Singapore", origin: "Dubai", destination: "Singapore", status: "In transit", riskLevel: "medium", eta: "Apr 18, 2026", cargo: "Oil & Gas Equipment", vessel: "MV Arabian", progress: 55, co2: 1350, fuelConsumption: 490, region: "Middle East" },
-];
-
-export const alerts: Alert[] = [
-  { id: "a1", type: "danger", title: "High congestion at Port Aden", message: "Severe port congestion detected. Estimated 48h delay. Rerouting via Salalah recommended.", region: "Middle East", time: "2 min ago", isNew: true, severity: "high" },
-  { id: "a2", type: "warning", title: "Storm warning — Arabian Sea", message: "Cyclonic activity predicted. Shipments SHP-001, SHP-003 may be affected.", region: "South Asia", time: "15 min ago", isNew: true, severity: "medium" },
-  { id: "a3", type: "warning", title: "Labor strike — Port of Hamburg", message: "Dockworkers' union announced 24h strike starting tomorrow.", region: "Europe", time: "1 hr ago", isNew: false, severity: "medium" },
-  { id: "a4", type: "info", title: "Route optimization available", message: "Alternative route via Cape of Good Hope saves $12K with +2 day transit.", region: "East Africa", time: "3 hr ago", isNew: false, severity: "low" },
-  { id: "a5", type: "danger", title: "Political unrest — Red Sea corridor", message: "Navigation advisory issued. All vessels advised to use alternate routes.", region: "Middle East", time: "5 hr ago", isNew: false, severity: "critical" },
-  { id: "a6", type: "warning", title: "Port congestion — Singapore", message: "Average wait time increased to 36 hours at Singapore port.", region: "Southeast Asia", time: "6 hr ago", isNew: false, severity: "medium" },
-  { id: "a7", type: "info", title: "Weather clearing — Bay of Bengal", message: "Monsoon activity subsiding. Routes through Bay of Bengal now safer.", region: "South Asia", time: "8 hr ago", isNew: false, severity: "low" },
 ];
 
 export const defaultRoute: Route = {
