@@ -84,7 +84,7 @@ async function fetchNoaaAlerts(): Promise<AlertInsert[]> {
   });
 }
 
-async function fetchUsแgsEarthquakes(): Promise<AlertInsert[]> {
+async function fetchUsgsEarthquakes(): Promise<AlertInsert[]> {
   const result = await fetch("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson", {
     headers: { Accept: "application/geo+json" },
   });
@@ -131,7 +131,7 @@ Deno.serve(async (req) => {
     const { data, error: authError } = await userClient.auth.getUser();
     if (authError || !data.user) return response({ error: "Unauthorized" }, 401);
 
-    const [noaaResult, usgsResult] = await Promise.allSettled([fetchNoaaAlerts(), fetchUsגsEarthquakes()]);
+    const [noaaResult, usgsResult] = await Promise.allSettled([fetchNoaaAlerts(), fetchUsgsEarthquakes()]);
     const alerts = [
       ...(noaaResult.status === "fulfilled" ? noaaResult.value : []),
       ...(usgsResult.status === "fulfilled" ? usgsResult.value : []),
